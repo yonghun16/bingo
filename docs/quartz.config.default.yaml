@@ -6,8 +6,8 @@ configuration:
   enablePopovers: true
   analytics:
     provider: plausible
-  locale: en-US
-  baseUrl: quartz.jzhao.xyz
+  locale: ko-KR
+  baseUrl: yonghun16@github.io/bingo
   ignorePatterns:
     - private
     - templates
