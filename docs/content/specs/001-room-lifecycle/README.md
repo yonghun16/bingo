@@ -1,11 +1,16 @@
 ---
-status: draft
+status: in-progress
 created: 2026-09-19
 tags:
 - realtime
 - mvp
 created_at: 2026-09-19T14:17:47.863832Z
-updated_at: 2026-09-19T14:33:00.740039Z
+updated_at: 2026-09-19T14:57:58.341503Z
+transitions:
+- status: planned
+  at: 2026-09-19T14:57:51.465849Z
+- status: in-progress
+  at: 2026-09-19T14:57:51.510164Z
 ---
 
 # 방 생성/입장/정원/호스트 판단
@@ -28,8 +33,8 @@ updated_at: 2026-09-19T14:33:00.740039Z
 
 ## Plan
 
-- [ ] `lib/supabase.ts`: Supabase 클라이언트 단일 인스턴스
-- [ ] `features/bingo-room/api/roomChannel.ts`: 채널 구독/구독 해제
+- [x] `lib/supabase.ts`: Supabase 클라이언트 단일 인스턴스
+- [x] `features/bingo-room/api/roomChannel.ts`: 채널 구독/구독 해제
 - [ ] `useRoomPresence` 훅: 참가자 목록, 인원수, 호스트 여부 계산
 - [ ] 정원(5명) 초과 / 이미 시작된 방 입장 차단 로직
 - [ ] 방 만들기 → roomId 생성 → 초대 링크 표시 UI
