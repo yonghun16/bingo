@@ -49,3 +49,11 @@ export function trackPresence(channel: RealtimeChannel, payload: RoomPresencePay
 export function untrackPresence(channel: RealtimeChannel) {
   return channel.untrack();
 }
+
+/**
+ * 방 채널에 Broadcast 이벤트를 보낸다. 이벤트 이름은 kebab-case로
+ * 통일한다 (AGENTS.md "통신 규칙" 참고).
+ */
+export function broadcast<T extends object>(channel: RealtimeChannel, event: string, payload: T) {
+  return channel.send({ type: "broadcast", event, payload });
+}

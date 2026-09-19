@@ -1,5 +1,5 @@
 ---
-status: draft
+status: in-progress
 created: 2026-09-19
 tags:
 - realtime
@@ -7,7 +7,12 @@ tags:
 depends_on:
 - 001-room-lifecycle
 created_at: 2026-09-19T14:17:54.142230Z
-updated_at: 2026-09-19T14:33:06.113625Z
+updated_at: 2026-09-19T15:34:57.208937Z
+transitions:
+- status: planned
+  at: 2026-09-19T15:34:21.867764Z
+- status: in-progress
+  at: 2026-09-19T15:34:21.908034Z
 ---
 
 # 빙고판 세팅 및 준비 완료
@@ -26,16 +31,19 @@ updated_at: 2026-09-19T14:33:06.113625Z
 
 - 준비 완료 후에도 게임이 시작되기 전까지는 배치를 다시 바꿀 수 있다. 배치를 변경하는 순간 본인 Presence의 `isReady`는 자동으로 `false`로 되돌아가며, 25칸을 다시 유효하게 채우고 준비 완료를 눌러야 다시 `true`가 된다.
 
+
+- 각 참가자는 자신의 Presence payload에 `roomStatus`(waiting/playing)도 함께 싣는다. game-started를 받으면(혹은 호스트가 직접 시작을 결정하면) 자신의 presence를 `roomStatus: 'playing'`으로 다시 track한다 — 001-room-lifecycle의 "이미 시작된 방 입장 차단"이 이 값으로 동작한다.
+
 ## Plan
 
-- [ ] 5x5 보드 컴포넌트(숫자 배치 UI)
-- [ ] 보드 유효성 검증 유틸(중복/누락 체크)
-- [ ] 준비 완료 시 Presence 메타데이터 갱신
-- [ ] 참가자별 준비 상태(대기중/완료) 표시 UI
-- [ ] 호스트: 전원 준비 완료 감지 → `game-started` broadcast + 턴 순서 계산
+- [x] 5x5 보드 컴포넌트(숫자 배치 UI)
+- [x] 보드 유효성 검증 유틸(중복/누락 체크)
+- [x] 준비 완료 시 Presence 메타데이터 갱신
+- [x] 참가자별 준비 상태(대기중/완료) 표시 UI
+- [x] 호스트: 전원 준비 완료 감지 → `game-started` broadcast + 턴 순서 계산
 
 
-- [ ] 준비 완료 후 배치 변경 감지 시 `isReady`를 자동으로 `false`로 되돌리는 로직
+- [x] 준비 완료 후 배치 변경 감지 시 `isReady`를 자동으로 `false`로 되돌리는 로직
 
 ## Test
 
@@ -44,3 +52,5 @@ updated_at: 2026-09-19T14:33:06.113625Z
 - [ ] 모든 탭에서 동일한 턴 순서가 계산됨
 
 - [ ] 준비 완료 후 배치를 바꾸면 해당 유저의 준비 상태가 자동으로 '대기중'으로 바뀌고 전원에게 반영됨
+
+(참고) 위 항목들은 실제 Supabase 프로젝트/.env가 없어 브라우저로 라이브 검증하지 못했다(빌드·타입체크·lint만 통과 확인). 여러 탭으로 직접 확인이 필요하다.

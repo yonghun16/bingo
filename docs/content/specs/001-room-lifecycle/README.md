@@ -5,7 +5,7 @@ tags:
 - realtime
 - mvp
 created_at: 2026-09-19T14:17:47.863832Z
-updated_at: 2026-09-19T15:19:56.716857Z
+updated_at: 2026-09-19T15:34:12.863026Z
 transitions:
 - status: planned
   at: 2026-09-19T14:57:51.465849Z
@@ -36,7 +36,7 @@ transitions:
 - [x] `lib/supabase.ts`: Supabase 클라이언트 단일 인스턴스
 - [x] `features/bingo-room/api/roomChannel.ts`: 채널 구독/구독 해제
 - [x] `useRoomPresence` 훅: 참가자 목록, 인원수, 호스트 여부 계산
-- [ ] 정원(5명) 초과 / 이미 시작된 방 입장 차단 로직
+- [x] 정원(5명) 초과 / 이미 시작된 방 입장 차단 로직
 - [x] 방 만들기 → roomId 생성 → 초대 링크 표시 UI
 - [x] 닉네임 입력 → 입장 플로우
 
@@ -58,5 +58,5 @@ transitions:
 
 호스트 이탈 시 승계 로직의 실제 활용(턴 타이머 이어받기)은 003(turn-gameplay)에서 다룬다.
 
-"정원(5명) 초과 / 이미 시작된 방 입장 차단" 중 정원 체크는 구현 완료. "이미 시작된 방" 차단은 status를 만드는 이벤트(game-started, 003 스펙)가 아직 없어서 보류 — 그 스펙 구현 시 함께 마무리한다.
+"정원(5명) 초과 / 이미 시작된 방 입장 차단"은 002-board-setup에서 각자 Presence에 roomStatus를 함께 실어보내는 방식으로 마무리했다(각 참가자가 game-started 수신 시 자신의 presence를 roomStatus: 'playing'으로 다시 track). 늦게 입장하는 클라이언트도 기존 참가자 중 한 명의 presence만 보면 시작 여부를 알 수 있다.
 Test 항목은 아직 실제 Supabase 프로젝트/.env가 없어 브라우저로 라이브 검증하지 못했다(빌드·타입체크·lint만 통과 확인). .env.example을 채운 뒤 여러 탭으로 직접 확인이 필요하다.
