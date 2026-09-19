@@ -1,5 +1,5 @@
 ---
-status: draft
+status: in-progress
 created: 2026-09-19
 tags:
 - realtime
@@ -8,7 +8,12 @@ tags:
 depends_on:
 - 002-board-setup
 created_at: 2026-09-19T14:17:59.043506Z
-updated_at: 2026-09-19T14:33:14.463424Z
+updated_at: 2026-09-19T15:43:25.749708Z
+transitions:
+- status: planned
+  at: 2026-09-19T15:42:56.624950Z
+- status: in-progress
+  at: 2026-09-19T15:42:56.675606Z
 ---
 
 # 턴제 숫자 호출과 라인 판정
@@ -31,19 +36,25 @@ updated_at: 2026-09-19T14:33:14.463424Z
 - 턴 시작 시각 `turnStartedAt`을 `game-started`/`number-called`에 포함시켜, 각 클라이언트가 자체 카운트다운 대신 `turnStartedAt + 10초` 기준으로 남은 시간을 계산한다. 호스트가 교체돼도 이 값을 그대로 이어받아 타이머가 처음부터 다시 시작되지 않는다.
 - 이탈로 활성 참가자가 1명만 남으면 즉시 게임을 종료하고 그 1명을 단독 우승 처리한다(실제 `game-over` 발행 로직은 004-game-end-restart 참고).
 
+
+구현하면서 두 가지를 조정했다.
+- 별도의 `call-number` 중계 이벤트는 두지 않고, 턴 유저 본인이 직접 `number-called`(`auto: false`)를 broadcast하도록 단순화했다(게임흐름.md 동기화 완료). 발신자 검증은 "보내기 전에 스스로 확인"으로 처리한다.
+- "활성 참가자 1명 남을 시 자동 종료"는 실제 game-over 발행 메커니즘이 없는 상태라 이번에는 구현하지 않고 004-game-end-restart로 그대로 미룬다.
+- (002-board-setup 버그 수정) BoardSetupPanel이 준비 완료 상태에서 보드/팔레트를 통째로 비활성화하고 있어서, 재배치로 isReady를 되돌리는 경로 자체가 눌리지 않았다. 보드 상태를 RoomPage로 끌어올리며(게임 진행 중에도 내 보드가 필요해서) 같이 고쳤다 — 이제 준비 완료 후에도 계속 클릭할 수 있고, 클릭하면 정상적으로 isReady가 풀린다.
+
 ## Plan
 
-- [ ] 턴 상태(현재 턴, 남은 시간) 계산 훅
-- [ ] 숫자 선택 UI(턴일 때만 활성화, 이미 호출된 숫자는 비활성화) → `call-number` broadcast
-- [ ] 호스트: 10초 타이머 관리 + 시간 초과 자동 호출
-- [ ] `number-called` 수신 → 보드 마킹 + 라인 완성 수 계산
-- [ ] 3줄 완성 시 `bingo-completed` broadcast
+- [x] 턴 상태(현재 턴, 남은 시간) 계산 훅
+- [x] 숫자 선택 UI(턴일 때만 활성화, 이미 호출된 숫자는 비활성화) → `call-number` broadcast
+- [x] 호스트: 10초 타이머 관리 + 시간 초과 자동 호출
+- [x] `number-called` 수신 → 보드 마킹 + 라인 완성 수 계산
+- [x] 3줄 완성 시 `bingo-completed` broadcast
 - [ ] 호스트 이탈 시 다음 순번이 타이머 역할을 승계하는지 확인
 
 
-- [ ] `turnSeq` 카운터 관리 및 `number-called` 중복(같은 turnSeq) 무시 로직
-- [ ] `call-number` 발신자 검증(현재 턴 유저 여부)
-- [ ] `turnStartedAt` 기반 카운트다운(타임스탬프 계산, 로컬 setTimeout 재시작 아님)
+- [x] `turnSeq` 카운터 관리 및 `number-called` 중복(같은 turnSeq) 무시 로직
+- [x] `call-number` 발신자 검증(현재 턴 유저 여부)
+- [x] `turnStartedAt` 기반 카운트다운(타임스탬프 계산, 로컬 setTimeout 재시작 아님)
 - [ ] 활성 참가자 1명 남을 시 자동 종료 트리거
 
 ## Test
@@ -58,3 +69,5 @@ updated_at: 2026-09-19T14:33:14.463424Z
 - [ ] 현재 턴이 아닌 사용자가 보낸 `call-number`는 무시됨
 - [ ] 호스트가 중간에 바뀌어도 카운트다운이 처음부터 다시 시작되지 않고 이어짐
 - [ ] 활성 참가자가 1명으로 줄면 즉시 게임이 종료됨
+
+(참고) 위 Plan 항목 대부분은 코드로 구현되고 순수 로직(줄 완성 판정 등)은 스크립트로 검증했지만, 실제 Supabase 프로젝트/.env가 없어 여러 탭으로 하는 라이브 테스트(턴 순서, 자동 호출, 호스트 승계 등)는 아직 못 했다.

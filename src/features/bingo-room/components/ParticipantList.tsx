@@ -5,9 +5,15 @@ interface ParticipantListProps {
   players: Player[];
   hostId: string | null;
   currentPlayerId: string | null;
+  /** 오른쪽에 표시할 상태 텍스트. 생략하면 준비중/준비완료를 보여준다 */
+  renderStatus?: (player: Player) => string;
 }
 
-export function ParticipantList({ players, hostId, currentPlayerId }: ParticipantListProps) {
+const defaultRenderStatus = (player: Player) => (player.isReady ? "준비 완료" : "대기중");
+
+export function ParticipantList({ players, hostId, currentPlayerId, renderStatus }: ParticipantListProps) {
+  const getStatus = renderStatus ?? defaultRenderStatus;
+
   return (
     <ul className="flex w-full flex-col gap-2">
       {players.map((player) => (
@@ -20,7 +26,7 @@ export function ParticipantList({ players, hostId, currentPlayerId }: Participan
             {player.id === currentPlayerId ? " (나)" : ""}
             {player.id === hostId ? " 👑" : ""}
           </span>
-          <span className="text-sm text-slate-500">{player.isReady ? "준비 완료" : "대기중"}</span>
+          <span className="text-sm text-slate-500">{getStatus(player)}</span>
         </li>
       ))}
     </ul>

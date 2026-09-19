@@ -45,3 +45,30 @@ export function placeNumberOnBoard(board: BoardGrid, value: number, row: number,
 export function clearCellOnBoard(board: BoardGrid, row: number, col: number): BoardGrid {
   return setCell(board, row, col, null);
 }
+
+function buildLines(): [number, number][][] {
+  const rows = Array.from({ length: BOARD_SIZE }, (_, r) =>
+    Array.from({ length: BOARD_SIZE }, (_, c) => [r, c] as [number, number]),
+  );
+  const cols = Array.from({ length: BOARD_SIZE }, (_, c) =>
+    Array.from({ length: BOARD_SIZE }, (_, r) => [r, c] as [number, number]),
+  );
+  const diagonalDown = Array.from({ length: BOARD_SIZE }, (_, i) => [i, i] as [number, number]);
+  const diagonalUp = Array.from({ length: BOARD_SIZE }, (_, i) => [i, BOARD_SIZE - 1 - i] as [number, number]);
+  return [...rows, ...cols, diagonalDown, diagonalUp];
+}
+
+const LINES = buildLines();
+
+/**
+ * 가로 5줄 + 세로 5줄 + 대각선 2줄 = 12줄 중 완성된 줄 수를 센다.
+ * (게임흐름.md "가로 5줄, 세로 5줄, 대각선 2줄 = 총 12개 라인" 참고)
+ */
+export function countCompletedLines(board: BoardGrid, markedNumbers: ReadonlySet<number>): number {
+  return LINES.filter((line) =>
+    line.every(([row, col]) => {
+      const value = board[row][col];
+      return value !== null && markedNumbers.has(value);
+    }),
+  ).length;
+}

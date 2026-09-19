@@ -41,17 +41,23 @@ export interface ChatMessage {
 
 /**
  * Supabase Presence에 track()으로 올리는 값. Presence key는 닉네임이다.
- * (Player의 부분집합 — board/markedNumbers/completedLines는 Presence가
- * 아니라 게임 진행 중 로컬 계산으로 채워진다.)
+ * (Player의 부분집합 — board/markedNumbers는 Presence가 아니라 각자
+ * 로컬에서만 들고 있는다. 다른 사람에게 내 보드 배치를 공개하지 않기
+ * 위함이다.)
  *
  * `roomStatus`는 각자 자신의 presence에도 반영해둔다 — game-started
  * broadcast는 그 순간 구독 중인 클라이언트에게만 가고 늦게 들어온
  * 클라이언트에게는 재전송되지 않으므로, 방금 입장하려는 클라이언트가
  * "이미 시작된 방인지"를 Presence 스냅샷만 보고도 판단할 수 있어야 한다.
+ *
+ * `completedLines`도 각자 갱신해서 전원에게 공유한다 — "각 유저의 완성
+ * 라인 수는 항상 표시"(게임흐름.md) 요구사항 때문에, 보드 내용 자체는
+ * 숨기더라도 완성 라인 "개수"만큼은 서로 볼 수 있어야 한다.
  */
 export interface RoomPresencePayload {
   nickname: string;
   isReady: boolean;
   joinedAt: number;
   roomStatus: "waiting" | "playing";
+  completedLines: number;
 }

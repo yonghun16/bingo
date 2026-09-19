@@ -5,6 +5,8 @@ import { BoardSetupPanel } from "../../features/bingo-room/components/BoardSetup
 import { InviteLinkBox } from "../../features/bingo-room/components/InviteLinkBox";
 import { NicknameEntryForm } from "../../features/bingo-room/components/NicknameEntryForm";
 import { ParticipantList } from "../../features/bingo-room/components/ParticipantList";
+import { TurnGameplayPanel } from "../../features/bingo-room/components/TurnGameplayPanel";
+import { useBingoBoard } from "../../features/bingo-room/hooks/useBingoBoard";
 import { useRoomPresence } from "../../features/bingo-room/hooks/useRoomPresence";
 import type { JoinRoomResult } from "../../features/bingo-room/hooks/useRoomPresence";
 
@@ -16,13 +18,25 @@ const JOIN_ERROR_MESSAGE: Record<Exclude<JoinRoomResult, { ok: true }>["reason"]
 };
 
 /**
- * 방 화면. 닉네임 입력 후 입장하면 대기실(빙고판 세팅)을 보여주고,
- * 전원 준비 완료 시 게임이 시작된다. 턴 진행/종료 화면은 003~004
- * 스펙에서 이어서 채운다.
+ * 방 화면. 닉네임 입력 → 빙고판 세팅 → 턴제 게임 진행 순으로 전환된다.
+ * 종료/재시작 화면은 004 스펙에서 이어서 채운다.
  */
 export function RoomPage() {
   const { roomId } = useParams<{ roomId: string }>();
-  const { players, host, currentPlayer, roomStatus, turnOrder, join, setReady } = useRoomPresence(roomId ?? "");
+  const bingoBoard = useBingoBoard();
+  const {
+    players,
+    host,
+    currentPlayer,
+    roomStatus,
+    calledNumbers,
+    markedNumbers,
+    currentTurnPlayerId,
+    turnStartedAt,
+    join,
+    setReady,
+    callNumber,
+  } = useRoomPresence(roomId ?? "", bingoBoard.board);
   const [joinError, setJoinError] = useState<string | null>(null);
   const [isJoining, setIsJoining] = useState(false);
 
@@ -40,6 +54,20 @@ export function RoomPage() {
     }
   };
 
+  const handleCellClick = (row: number, col: number) => {
+    bingoBoard.placeAt(row, col);
+    if (currentPlayer?.isReady) setReady(false);
+  };
+
+  const handleReset = () => {
+    bingoBoard.reset();
+    if (currentPlayer?.isReady) setReady(false);
+  };
+
+  const handleReadyClick = () => {
+    if (bingoBoard.isValid) setReady(true);
+  };
+
   if (!currentPlayer) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center gap-6 bg-slate-50 px-4">
@@ -51,37 +79,47 @@ export function RoomPage() {
     );
   }
 
+  if (roomStatus === "playing") {
+    return (
+      <main className="flex min-h-screen flex-col items-center gap-6 bg-slate-50 px-4 py-12">
+        <h1 className="text-xl font-semibold text-slate-900">
+          방 <span className="font-mono">{roomId}</span>
+        </h1>
+        <TurnGameplayPanel
+          board={bingoBoard.board}
+          markedNumbers={markedNumbers}
+          calledNumbers={calledNumbers}
+          players={players}
+          hostId={host?.id ?? null}
+          currentTurnPlayerId={currentTurnPlayerId}
+          currentPlayerId={currentPlayer.id}
+          turnStartedAt={turnStartedAt}
+          onCallNumber={callNumber}
+        />
+      </main>
+    );
+  }
+
   return (
     <main className="flex min-h-screen flex-col items-center gap-6 bg-slate-50 px-4 py-12">
       <h1 className="text-xl font-semibold text-slate-900">
-        방 <span className="font-mono">{roomId}</span> {roomStatus === "waiting" ? "대기실" : ""}
+        방 <span className="font-mono">{roomId}</span> 대기실
       </h1>
-
-      {roomStatus === "waiting" ? (
-        <>
-          <InviteLinkBox inviteUrl={window.location.href} />
-          <BoardSetupPanel
-            isReady={currentPlayer.isReady}
-            onReady={() => setReady(true)}
-            onUnready={() => setReady(false)}
-          />
-          <div className="w-full max-w-xs">
-            <ParticipantList players={players} hostId={host?.id ?? null} currentPlayerId={currentPlayer.id} />
-          </div>
-        </>
-      ) : (
-        <section className="flex w-full max-w-xs flex-col items-center gap-3 text-center">
-          <p className="font-medium text-slate-800">게임이 시작되었습니다! 🎉</p>
-          <p className="text-sm text-slate-500">턴 진행 화면은 준비 중입니다 (003 스펙).</p>
-          {turnOrder ? (
-            <ol className="w-full list-decimal space-y-1 pl-6 text-left text-sm text-slate-600">
-              {turnOrder.map((id) => (
-                <li key={id}>{players.find((player) => player.id === id)?.nickname ?? id}</li>
-              ))}
-            </ol>
-          ) : null}
-        </section>
-      )}
+      <InviteLinkBox inviteUrl={window.location.href} />
+      <BoardSetupPanel
+        board={bingoBoard.board}
+        availableNumbers={bingoBoard.availableNumbers}
+        selectedNumber={bingoBoard.selectedNumber}
+        isValid={bingoBoard.isValid}
+        isReady={currentPlayer.isReady}
+        onSelectNumber={bingoBoard.selectNumber}
+        onCellClick={handleCellClick}
+        onReset={handleReset}
+        onReadyClick={handleReadyClick}
+      />
+      <div className="w-full max-w-xs">
+        <ParticipantList players={players} hostId={host?.id ?? null} currentPlayerId={currentPlayer.id} />
+      </div>
     </main>
   );
 }

@@ -16,10 +16,6 @@ export interface GameStartedPayload {
   turnStartedAt: number;
 }
 
-export interface CallNumberPayload {
-  number: number;
-}
-
 export interface NumberCalledPayload {
   number: number;
   auto: boolean;
