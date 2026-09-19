@@ -38,3 +38,14 @@ export interface ChatMessage {
   message: string;
   sentAt: number;
 }
+
+/**
+ * Supabase Presence에 track()으로 올리는 값. Presence key는 닉네임이다.
+ * (Player의 부분집합 — board/markedNumbers/completedLines는 Presence가
+ * 아니라 게임 진행 중 로컬 계산으로 채워진다.)
+ */
+export interface RoomPresencePayload {
+  nickname: string;
+  isReady: boolean;
+  joinedAt: number;
+}
