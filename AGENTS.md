@@ -412,18 +412,21 @@ React Query
 - 새로운 상태 관리 라이브러리를 추가하기 전에 이유를 설명합니다.
 
 # 통신 규칙
-최상단 "프로젝트 설정 > 통신 방식"에서 고른 방식에 맞게 아래 예시를 이
-섹션 전체에 걸쳐 다시 작성하세요. 지금은 Socket.io 기준 예시가 채워져
-있습니다.
+이 프로젝트는 Supabase Realtime(Broadcast + Presence)을 사용합니다.
 
-예시(Socket.io 기반 실시간 통신인 경우):
-- 소켓 이벤트 이름은 `snake_case`로 통일합니다.
-- 소켓 클라이언트 인스턴스는 `src/lib/socket.ts`에서 단일 인스턴스로 관리하고,
-  여러 곳에서 개별적으로 `io()`를 호출하지 않습니다.
-- 특정 feature의 emit/on 로직은 각 `features/<feature-name>/api/`에서
-  `lib/socket.ts`의 인스턴스를 가져다 씁니다.
-- 연결 해제/재연결 상황을 항상 고려합니다.
-- 여러 feature가 공유하는 이벤트 payload 타입은 `src/types/`에 정의한 뒤
+- Broadcast 이벤트 이름은 `kebab-case`로 통일합니다 (예: `number-called`,
+  `bingo-completed`).
+- Supabase 클라이언트 인스턴스는 `src/lib/supabase.ts`에서 단일 인스턴스로
+  관리하고, 여러 곳에서 개별적으로 `createClient()`를 호출하지 않습니다.
+- 방(room)마다 `bingo-room-${roomId}` 채널을 구독합니다. 특정 feature의
+  channel 구독/broadcast emit·on 로직은 각 `features/<feature-name>/api/`에서
+  `lib/supabase.ts`의 인스턴스를 가져다 씁니다.
+- 입장/퇴장 인원, 방장(호스트) 판단은 Supabase Presence로 처리하고, 별도
+  broadcast 이벤트로 흉내내지 않습니다.
+- 화면 이탈/언마운트 시 반드시 `channel.unsubscribe()`로 구독을 해제하고,
+  재접속 시 최신 상태를 다시 받아올 수 있는 동기화 로직(예: 상태 재요청
+  이벤트)을 고려합니다.
+- 여러 feature가 공유하는 broadcast payload 타입은 `src/types/`에 정의한 뒤
   사용합니다.
 
 # 에러 처리 규칙

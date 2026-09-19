@@ -5,7 +5,7 @@
 ## 기술 스택
 
 - 프론트엔드: React + TypeScript + Vite + Tailwind CSS
-- 실시간 통신: Socket.io-client ↔ 별도 Node.js + Socket.io 게임 서버
+- 실시간 통신: Supabase Realtime (Broadcast + Presence, 별도 게임 서버 없음)
 
 ## 게임 흐름
 
