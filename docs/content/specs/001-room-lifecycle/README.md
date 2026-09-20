@@ -5,7 +5,7 @@ tags:
 - realtime
 - mvp
 created_at: 2026-09-19T14:17:47.863832Z
-updated_at: 2026-09-19T15:34:12.863026Z
+updated_at: 2026-09-20T02:44:46.676445Z
 transitions:
 - status: planned
   at: 2026-09-19T14:57:51.465849Z
@@ -25,7 +25,7 @@ transitions:
 - 입장 시 채널을 구독하기 전에 현재 Presence 상태를 조회해 정원(5명) 초과 여부를 확인하고, 초과 시 입장을 막는다.
 - 이미 게임이 시작된 방(Presence로 공유되는 status가 `playing`/`ended`)에는 입장할 수 없다.
 - 호스트 = Presence 입장 시각(`joinedAt`)이 가장 이른 참가자. 별도 broadcast 없이 모든 클라이언트가 동일한 Presence 목록으로 각자 동일하게 계산한다.
-- 별도 게임 서버 없이 Presence/Broadcast만 사용하는 배경은 [[0001-supabase-realtime-통신]](ADR) 참고.
+- 별도 게임 서버 없이 Presence/Broadcast만 사용하는 배경은 `docs/decisions/0001-supabase-realtime-통신.md`(ADR) 참고.
 
 
 - 닉네임은 Presence key로 사용되므로 방 안에서 유일해야 한다. 입장 시 현재 Presence 목록에 동일 닉네임이 있으면 입장을 막고 다른 닉네임을 요구한다(같은 사람의 다중 탭 재입장도 동일하게 처리).
