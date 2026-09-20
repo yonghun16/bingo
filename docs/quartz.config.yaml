@@ -2,7 +2,10 @@
 configuration:
   pageTitle: 빙고
   pageTitleSuffix: ""
-  enableSPA: true
+  # Mermaid 렌더링 스크립트가 SPA 전환 시 지연 로드되면서 nav 이벤트를
+  # 놓쳐 첫 진입 시 다이어그램이 안 그려지는 문제가 있어 SPA를 껐다.
+  # 대신 링크 이동마다 완전한 페이지 새로고침이 일어난다.
+  enableSPA: false
   enablePopovers: true
   analytics:
     provider: plausible
