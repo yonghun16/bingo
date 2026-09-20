@@ -27,3 +27,4 @@ title: Welcome to Bingo Game
 
 # 개발 문서
   - [[개발프로세스]]
+  - [[Supabase-프로젝트-설정]]
