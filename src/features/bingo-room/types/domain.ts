@@ -58,6 +58,6 @@ export interface RoomPresencePayload {
   nickname: string;
   isReady: boolean;
   joinedAt: number;
-  roomStatus: "waiting" | "playing";
+  roomStatus: "waiting" | "playing" | "ended";
   completedLines: number;
 }

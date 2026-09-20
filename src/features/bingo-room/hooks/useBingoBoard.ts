@@ -1,5 +1,5 @@
 // @owner: ai
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   MAX_NUMBER,
   MIN_NUMBER,
@@ -10,6 +10,7 @@ import {
   placeNumberOnBoard,
   type BoardGrid,
 } from "../utils/board";
+import { loadSavedBoard, saveBoard } from "../utils/roomStorage";
 
 interface UseBingoBoardResult {
   board: BoardGrid;
@@ -26,11 +27,19 @@ interface UseBingoBoardResult {
 
 /**
  * 5x5 빙고판에 1~25 숫자를 클릭으로 배치하는 로컬 상태.
- * (002-board-setup 스펙 참고)
+ * localStorage에도 같이 저장해서, 같은 브라우저로 새로고침해도 배치가
+ * 남아있게 한다 — 이 보드는 아무에게도 공유되지 않으므로(게임 종료 전까지),
+ * 새로고침 시 복구할 수 있는 곳이 로컬 저장소뿐이다 (006-reconnect-sync 참고).
+ *
+ * @param roomId - 저장 키로 쓸 방 ID
  */
-export function useBingoBoard(): UseBingoBoardResult {
-  const [board, setBoard] = useState<BoardGrid>(() => createEmptyBoard());
+export function useBingoBoard(roomId: string): UseBingoBoardResult {
+  const [board, setBoard] = useState<BoardGrid>(() => loadSavedBoard(roomId) ?? createEmptyBoard());
   const [selectedNumber, setSelectedNumber] = useState<number | null>(null);
+
+  useEffect(() => {
+    saveBoard(roomId, board);
+  }, [roomId, board]);
 
   const placedNumbers = getPlacedNumbers(board);
   const availableNumbers = Array.from(
@@ -38,24 +47,27 @@ export function useBingoBoard(): UseBingoBoardResult {
     (_, index) => index + MIN_NUMBER,
   ).filter((n) => !placedNumbers.has(n));
 
-  const selectNumber = (value: number) => {
+  const selectNumber = useCallback((value: number) => {
     setSelectedNumber((current) => (current === value ? null : value));
-  };
+  }, []);
 
-  const placeAt = (row: number, col: number) => {
-    if (board[row][col] !== null) {
-      setBoard((current) => clearCellOnBoard(current, row, col));
-      return;
-    }
-    if (selectedNumber === null) return;
-    setBoard((current) => placeNumberOnBoard(current, selectedNumber, row, col));
-    setSelectedNumber(null);
-  };
+  const placeAt = useCallback(
+    (row: number, col: number) => {
+      if (board[row][col] !== null) {
+        setBoard((current) => clearCellOnBoard(current, row, col));
+        return;
+      }
+      if (selectedNumber === null) return;
+      setBoard((current) => placeNumberOnBoard(current, selectedNumber, row, col));
+      setSelectedNumber(null);
+    },
+    [board, selectedNumber],
+  );
 
-  const reset = () => {
+  const reset = useCallback(() => {
     setBoard(createEmptyBoard());
     setSelectedNumber(null);
-  };
+  }, []);
 
   return { board, availableNumbers, selectedNumber, isValid: isBoardValid(board), selectNumber, placeAt, reset };
 }

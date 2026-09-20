@@ -5,10 +5,12 @@ interface NicknameEntryFormProps {
   onSubmit: (nickname: string) => void;
   error?: string | null;
   isSubmitting?: boolean;
+  /** 이 브라우저로 예전에 썼던 닉네임이 있으면 미리 채워둔다 (재접속 편의) */
+  defaultValue?: string;
 }
 
-export function NicknameEntryForm({ onSubmit, error, isSubmitting = false }: NicknameEntryFormProps) {
-  const [nickname, setNickname] = useState("");
+export function NicknameEntryForm({ onSubmit, error, isSubmitting = false, defaultValue = "" }: NicknameEntryFormProps) {
+  const [nickname, setNickname] = useState(defaultValue);
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
