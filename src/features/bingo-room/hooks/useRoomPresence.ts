@@ -89,6 +89,7 @@ function toPlayers(state: PresenceState): Player[] {
       isReady: payload.isReady,
       completedLines: payload.completedLines,
       joinedAt: payload.joinedAt,
+      roomStatus: payload.roomStatus,
     };
   });
 }
@@ -548,7 +549,12 @@ export function useRoomPresence(roomId: string, board: BoardGrid | null): UseRoo
     if (roomStatus !== "waiting" || hasStartedRef.current) return;
     if (!currentPlayer || !host || currentPlayer.id !== host.id) return;
     if (players.length < MIN_PLAYERS_TO_START) return;
-    if (!players.every((player) => player.isReady)) return;
+    // isReady뿐 아니라 각자의 roomStatus도 "waiting"인지 같이 봐야 한다 — 재시작
+    // 직후에는 방금 전 라운드의 isReady:true가 아직 presence에 남아있는 낡은
+    // 스냅샷일 수 있고(트랙 요청이 비동기라 반영에 시간이 걸림), isReady와
+    // roomStatus는 항상 같은 payload로 함께 갱신되므로 둘 다 확인해야 "정말
+    // 새 라운드에서 다시 준비를 마쳤다"는 걸 보장할 수 있다.
+    if (!players.every((player) => player.isReady && player.roomStatus === "waiting")) return;
 
     const channel = channelRef.current;
     if (!channel) return;

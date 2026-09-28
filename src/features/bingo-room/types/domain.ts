@@ -31,6 +31,13 @@ export interface Player {
   completedLines: number;
   /** Presence 입장 시각. 턴 순서와 호스트 판단에 사용 */
   joinedAt: number;
+  /**
+   * 이 참가자가 마지막으로 보고한 자신의 roomStatus. `isReady`와 항상
+   * 같은 presence payload로 같이 갱신되므로, "재시작 직후 isReady가 아직
+   * 예전 값(true)으로 남아있는 낡은 스냅샷"인지 구분하는 용도로 쓴다
+   * (재시작 직후엔 이 값이 아직 "waiting"으로 안 바뀐 상태일 수 있음).
+   */
+  roomStatus: "waiting" | "playing" | "ended";
 }
 
 export interface ChatMessage {
