@@ -3,8 +3,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import {
   broadcast,
+  createRoomChannel,
   leaveRoomChannel,
-  subscribeToRoomChannel,
   trackPresence,
   untrackPresence,
 } from "../api/roomChannel";
@@ -335,9 +335,9 @@ export function useRoomPresence(roomId: string, board: BoardGrid | null): UseRoo
       return new Promise((resolve) => {
         let channel: RealtimeChannel;
         try {
-          channel = subscribeToRoomChannel(roomId, nickname);
+          channel = createRoomChannel(roomId, nickname);
         } catch (error) {
-          console.error("Supabase 방 채널 구독 실패:", error);
+          console.error("Supabase 방 채널 생성 실패:", error);
           resolve({ ok: false, reason: "config-error" });
           return;
         }
@@ -386,8 +386,20 @@ export function useRoomPresence(roomId: string, board: BoardGrid | null): UseRoo
           pendingStateSyncResolverRef.current?.(payload as StateSyncPayload);
         });
 
+        let settled = false;
         channel.subscribe((status) => {
+          if (settled) return; // 입장 성공/실패가 이미 정해진 뒤의 상태 변화는 여기서 다루지 않는다
+
+          if (status === "CHANNEL_ERROR" || status === "TIMED_OUT" || status === "CLOSED") {
+            settled = true;
+            console.error("Supabase 방 채널 구독 실패:", status);
+            leaveRoomChannel(channel);
+            resolve({ ok: false, reason: "config-error" });
+            return;
+          }
+
           if (status !== "SUBSCRIBED") return;
+          settled = true;
 
           const state = channel.presenceState<RoomPresencePayload>();
           const isDuplicate = Object.prototype.hasOwnProperty.call(state, nickname);

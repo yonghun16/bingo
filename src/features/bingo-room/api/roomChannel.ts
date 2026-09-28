@@ -8,24 +8,23 @@ function roomChannelName(roomId: string): string {
 }
 
 /**
- * 방 채널을 구독한다. Presence key로 닉네임을 사용하므로(게임흐름.md 참고),
- * 같은 방에는 동일한 닉네임으로 동시에 두 번 구독하지 않아야 한다.
- * 구독만으로는 Presence 목록에 나타나지 않으며, `trackPresence`를 호출해야
- * 실제로 참가자로 반영된다 — 정원/닉네임 중복 검증을 먼저 한 뒤 track하기
- * 위한 구조다.
+ * 방 채널을 만든다(아직 구독하지 않음). Presence key로 닉네임을 사용하므로
+ * (게임흐름.md 참고), 같은 방에는 동일한 닉네임으로 동시에 두 번 구독하지
+ * 않아야 한다.
+ *
+ * Supabase Realtime은 `channel.subscribe()`를 호출한 뒤에는 `channel.on(...)`
+ * 으로 리스너를 추가할 수 없다("cannot add ... callbacks after subscribe()").
+ * 그래서 이 함수는 채널 생성까지만 하고, 호출한 쪽이 필요한 `on()` 리스너를
+ * 전부 등록한 뒤 마지막에 직접 `channel.subscribe(콜백)`을 호출해야 한다.
  *
  * @param roomId - 방 ID
  * @param nickname - 이 클라이언트의 닉네임 (Presence key)
- * @returns 구독된 RealtimeChannel. 화면을 벗어날 때 반드시 `leaveRoomChannel`로 정리한다.
+ * @returns 아직 구독하지 않은 RealtimeChannel. 화면을 벗어날 때 반드시 `leaveRoomChannel`로 정리한다.
  */
-export function subscribeToRoomChannel(roomId: string, nickname: string): RealtimeChannel {
-  const channel = getSupabaseClient().channel(roomChannelName(roomId), {
+export function createRoomChannel(roomId: string, nickname: string): RealtimeChannel {
+  return getSupabaseClient().channel(roomChannelName(roomId), {
     config: { presence: { key: nickname } },
   });
-
-  channel.subscribe();
-
-  return channel;
 }
 
 /**

@@ -18,7 +18,7 @@ const JOIN_ERROR_MESSAGE: Record<Exclude<JoinRoomResult, { ok: true }>["reason"]
   full: "방이 가득 찼습니다.",
   "duplicate-nickname": "이미 사용 중인 닉네임입니다.",
   "already-started": "이미 게임이 시작(또는 종료)된 방입니다.",
-  "config-error": "Supabase 설정을 확인해주세요 (.env.example 참고).",
+  "config-error": "서버(Supabase)에 연결하지 못했습니다. .env 설정을 확인하거나 잠시 후 다시 시도해주세요.",
 };
 
 /**
