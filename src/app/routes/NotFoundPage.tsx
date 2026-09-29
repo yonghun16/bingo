@@ -7,10 +7,10 @@ import { Link } from "react-router-dom";
  */
 export function NotFoundPage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-6 bg-slate-50 px-4 text-center">
+    <main className="flex min-h-screen flex-col items-center justify-center gap-6 bg-gradient-to-b from-slate-950 to-slate-900 px-4 text-center">
       <div>
-        <h1 className="text-3xl font-bold text-slate-900">페이지를 찾을 수 없어요</h1>
-        <p className="mt-2 text-slate-600">
+        <h1 className="text-3xl font-bold text-white">페이지를 찾을 수 없어요</h1>
+        <p className="mt-2 text-slate-400">
           주소가 잘못됐거나 링크가 손상된 것 같아요.
           <br />
           공유받은 주소를 다시 확인해주세요.
@@ -18,7 +18,7 @@ export function NotFoundPage() {
       </div>
       <Link
         to="/"
-        className="rounded-lg bg-slate-900 px-6 py-3 font-medium text-white transition hover:bg-slate-700"
+        className="rounded-lg bg-emerald-500 px-6 py-3 font-medium text-white transition hover:bg-emerald-400"
       >
         홈으로 가기
       </Link>

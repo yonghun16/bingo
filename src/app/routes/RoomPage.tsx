@@ -123,9 +123,9 @@ export function RoomPage() {
 
   if (!currentPlayer) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center gap-6 bg-slate-50 px-4">
-        <p className="text-slate-600">
-          방 <span className="font-mono font-semibold">{roomId}</span>에 입장합니다
+      <main className="flex min-h-screen flex-col items-center justify-center gap-6 bg-gradient-to-b from-slate-950 to-slate-900 px-4">
+        <p className="text-slate-300">
+          방 <span className="font-mono font-semibold text-white">{roomId}</span>에 입장합니다
         </p>
         <NicknameEntryForm
           onSubmit={attemptJoin}
@@ -139,7 +139,7 @@ export function RoomPage() {
 
   const chat = <ChatPanel messages={chatMessages} onSend={sendChatMessage} />;
   const reconnectNotice = hasReconnectTimedOut ? (
-    <p className="w-full rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-700">
+    <p className="w-full rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-300">
       다른 참가자의 상태를 불러오지 못해 새로 시작합니다.
     </p>
   ) : null;
@@ -149,7 +149,7 @@ export function RoomPage() {
       <RoomLayout chat={chat}>
         <ChatToastLayer toasts={chatToasts} />
         {reconnectNotice}
-        <h1 className="text-xl font-semibold text-slate-900">
+        <h1 className="text-xl font-semibold text-white">
           방 <span className="font-mono">{roomId}</span>
         </h1>
         <GameOverPanel
@@ -168,7 +168,7 @@ export function RoomPage() {
       <RoomLayout chat={chat}>
         <ChatToastLayer toasts={chatToasts} />
         {reconnectNotice}
-        <h1 className="text-xl font-semibold text-slate-900">
+        <h1 className="text-xl font-semibold text-white">
           방 <span className="font-mono">{roomId}</span>
         </h1>
         <TurnGameplayPanel
@@ -191,12 +191,12 @@ export function RoomPage() {
       <ChatToastLayer toasts={chatToasts} />
       {reconnectNotice}
       <div className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-xl font-semibold text-slate-900">
+        <h1 className="text-xl font-semibold text-white">
           방 <span className="font-mono">{roomId}</span> 대기실
         </h1>
         <Link
           to="/"
-          className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-100"
+          className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-300 shadow-sm transition hover:bg-slate-700"
         >
           ← 타이틀로 돌아가기
         </Link>

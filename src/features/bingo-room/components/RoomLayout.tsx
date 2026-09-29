@@ -14,7 +14,7 @@ interface RoomLayoutProps {
  */
 export function RoomLayout({ children, chat }: RoomLayoutProps) {
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-6 bg-slate-50 px-4 py-12 lg:flex-row lg:items-start">
+    <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-6 bg-gradient-to-b from-slate-950 to-slate-900 px-4 py-12 lg:flex-row lg:items-start">
       <div className="flex flex-1 flex-col items-center gap-6">{children}</div>
       <div className="w-full lg:w-80">{chat}</div>
     </main>

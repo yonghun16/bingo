@@ -19,14 +19,14 @@ export function ParticipantList({ players, hostId, currentPlayerId, renderStatus
       {players.map((player) => (
         <li
           key={player.id}
-          className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-3 py-2"
+          className="flex items-center justify-between rounded-lg border border-slate-800 bg-slate-900/60 px-3 py-2"
         >
-          <span className="text-slate-800">
+          <span className="text-slate-200">
             {player.nickname}
             {player.id === currentPlayerId ? " (나)" : ""}
             {player.id === hostId ? " 👑" : ""}
           </span>
-          <span className="text-sm text-slate-500">{getStatus(player)}</span>
+          <span className="text-sm text-slate-400">{getStatus(player)}</span>
         </li>
       ))}
     </ul>

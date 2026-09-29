@@ -27,10 +27,10 @@ export function BingoBoard({ board, onCellClick, disabled = false, markedNumbers
               onClick={() => onCellClick(rowIndex, colIndex)}
               className={`flex aspect-square items-center justify-center rounded-md border text-lg font-semibold transition disabled:cursor-not-allowed ${
                 isMarked
-                  ? "border-emerald-400 bg-emerald-100 text-emerald-700"
+                  ? "border-emerald-400 bg-emerald-500 text-white shadow-[0_0_10px_rgba(16,185,129,0.45)]"
                   : isSelected
-                    ? "border-slate-900 bg-slate-100 ring-2 ring-slate-900"
-                    : "border-slate-300 bg-white text-slate-800 hover:bg-slate-100 disabled:opacity-60"
+                    ? "border-emerald-400 bg-slate-700 text-white ring-2 ring-emerald-400"
+                    : "border-slate-700 bg-slate-800 text-slate-200 hover:bg-slate-700 disabled:opacity-50"
               }`}
             >
               {cell ?? ""}

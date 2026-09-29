@@ -24,12 +24,12 @@ export function InviteLinkBox({ inviteUrl }: InviteLinkBoxProps) {
         type="text"
         readOnly
         value={inviteUrl}
-        className="min-w-0 flex-1 rounded-lg border border-slate-300 bg-slate-100 px-3 py-2 text-sm text-slate-600"
+        className="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-300"
       />
       <button
         type="button"
         onClick={handleCopy}
-        className="shrink-0 rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white transition hover:bg-slate-700"
+        className="shrink-0 rounded-lg bg-emerald-500 px-3 py-2 text-sm font-medium text-white transition hover:bg-emerald-400"
       >
         {copied ? "복사됨" : "복사"}
       </button>

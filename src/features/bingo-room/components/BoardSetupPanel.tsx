@@ -42,7 +42,7 @@ export function BoardSetupPanel({
 
   return (
     <section className="flex w-full max-w-xs flex-col items-center gap-4">
-      <p className="text-sm text-slate-500">승리 조건: {winLineThreshold}줄 완성</p>
+      <p className="text-sm text-slate-400">승리 조건: {winLineThreshold}줄 완성</p>
       <BingoBoard board={board} onCellClick={onCellClick} selectedCell={selectedCell} />
       <NumberPalette
         availableNumbers={availableNumbers}
@@ -50,11 +50,11 @@ export function BoardSetupPanel({
         onSelect={onSelectNumber}
         size={size}
       />
-      <p className="text-xs text-slate-400">숫자를 먼저 고르거나, 칸을 먼저 선택한 뒤 숫자를 눌러도 배치됩니다.</p>
+      <p className="text-xs text-slate-500">숫자를 먼저 고르거나, 칸을 먼저 선택한 뒤 숫자를 눌러도 배치됩니다.</p>
       <button
         type="button"
         onClick={onRandomize}
-        className="w-full rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 transition hover:bg-emerald-100"
+        className="w-full rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-300 transition hover:bg-emerald-500/20"
       >
         무작위로 채우기
       </button>
@@ -62,7 +62,7 @@ export function BoardSetupPanel({
         <button
           type="button"
           onClick={onReset}
-          className="flex-1 rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+          className="flex-1 rounded-lg border border-slate-700 bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 transition hover:bg-slate-700"
         >
           초기화
         </button>
@@ -70,15 +70,15 @@ export function BoardSetupPanel({
           type="button"
           onClick={onReadyClick}
           disabled={!isValid || isReady}
-          className="flex-1 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex-1 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isReady ? "준비 완료" : "준비 완료하기"}
         </button>
       </div>
       {!isValid && !isReady ? (
-        <p className="text-sm text-slate-500">1~{maxNumber} 숫자를 빈칸 없이 모두 배치해주세요.</p>
+        <p className="text-sm text-slate-400">1~{maxNumber} 숫자를 빈칸 없이 모두 배치해주세요.</p>
       ) : null}
-      {isReady ? <p className="text-sm text-emerald-600">준비 완료! 다른 참가자를 기다리는 중입니다.</p> : null}
+      {isReady ? <p className="text-sm text-emerald-400">준비 완료! 다른 참가자를 기다리는 중입니다.</p> : null}
     </section>
   );
 }

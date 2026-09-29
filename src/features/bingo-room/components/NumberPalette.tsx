@@ -27,8 +27,8 @@ export function NumberPalette({
           onClick={() => onSelect(n)}
           className={`rounded-md border px-2 py-1.5 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-60 ${
             selectedNumber === n
-              ? "border-slate-900 bg-slate-900 text-white"
-              : "border-slate-300 bg-white text-slate-700 hover:bg-slate-100"
+              ? "border-emerald-400 bg-emerald-500 text-white"
+              : "border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700"
           }`}
         >
           {n}

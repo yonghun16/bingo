@@ -27,32 +27,32 @@ export function ChatPanel({ messages, onSend }: ChatPanelProps) {
   };
 
   return (
-    <div className="flex h-full max-h-[32rem] w-full flex-col rounded-lg border border-slate-200 bg-white">
+    <div className="flex h-full max-h-[32rem] w-full flex-col rounded-lg border border-slate-800 bg-slate-900/60">
       <ul className="flex-1 space-y-2 overflow-y-auto p-3">
         {messages.length === 0 ? (
-          <li className="text-sm text-slate-400">아직 채팅이 없습니다.</li>
+          <li className="text-sm text-slate-500">아직 채팅이 없습니다.</li>
         ) : (
           messages.map((message, index) => (
             <li key={`${message.sentAt}-${message.nickname}-${index}`} className="text-sm">
-              <span className="font-medium text-slate-700">{message.nickname}</span>{" "}
-              <span className="text-xs text-slate-400">{formatTime(message.sentAt)}</span>
-              <p className="break-words text-slate-800">{message.message}</p>
+              <span className="font-medium text-slate-200">{message.nickname}</span>{" "}
+              <span className="text-xs text-slate-500">{formatTime(message.sentAt)}</span>
+              <p className="break-words text-slate-300">{message.message}</p>
             </li>
           ))
         )}
       </ul>
-      <form onSubmit={handleSubmit} className="flex gap-2 border-t border-slate-200 p-2">
+      <form onSubmit={handleSubmit} className="flex gap-2 border-t border-slate-800 p-2">
         <input
           type="text"
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
           placeholder="메시지 입력..."
-          className="min-w-0 flex-1 rounded-md border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-slate-500"
+          className="min-w-0 flex-1 rounded-md border border-slate-700 bg-slate-800 px-2 py-1.5 text-sm text-white outline-none placeholder:text-slate-500 focus:border-emerald-400"
         />
         <button
           type="submit"
           disabled={!draft.trim()}
-          className="shrink-0 rounded-md bg-slate-900 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+          className="shrink-0 rounded-md bg-emerald-500 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-50"
         >
           전송
         </button>

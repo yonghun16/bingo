@@ -50,10 +50,10 @@ export function TurnGameplayPanel({
 
   return (
     <section className="flex w-full max-w-xs flex-col items-center gap-4">
-      <p className="text-center font-medium text-slate-800">
+      <p className="text-center font-medium text-white">
         {isMyTurn ? "내 차례입니다! 숫자를 눌러 호출하세요" : `${currentTurnNickname}님의 차례`} · {remainingSeconds}초
       </p>
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-slate-400">
         승리 조건: {winLineThreshold}줄 완성 (내 진행: {myCompletedLines}/{winLineThreshold}줄)
       </p>
       <BingoBoard
@@ -62,7 +62,7 @@ export function TurnGameplayPanel({
         disabled={!isMyTurn}
         markedNumbers={markedNumbers}
       />
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-slate-400">
         호출된 숫자: {calledNumbers.length > 0 ? calledNumbers.join(", ") : "없음"}
       </p>
       <div className="w-full">
