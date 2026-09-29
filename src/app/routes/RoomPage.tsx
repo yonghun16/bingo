@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { BoardSetupPanel } from "../../features/bingo-room/components/BoardSetupPanel";
 import { ChatPanel } from "../../features/bingo-room/components/ChatPanel";
+import { ChatToastLayer } from "../../features/bingo-room/components/ChatToastLayer";
 import { GameOverPanel } from "../../features/bingo-room/components/GameOverPanel";
 import { InviteLinkBox } from "../../features/bingo-room/components/InviteLinkBox";
 import { NicknameEntryForm } from "../../features/bingo-room/components/NicknameEntryForm";
@@ -10,6 +11,7 @@ import { ParticipantList } from "../../features/bingo-room/components/Participan
 import { RoomLayout } from "../../features/bingo-room/components/RoomLayout";
 import { TurnGameplayPanel } from "../../features/bingo-room/components/TurnGameplayPanel";
 import { useBingoBoard } from "../../features/bingo-room/hooks/useBingoBoard";
+import { useChatToasts } from "../../features/bingo-room/hooks/useChatToasts";
 import { useRoomPresence } from "../../features/bingo-room/hooks/useRoomPresence";
 import type { JoinRoomResult } from "../../features/bingo-room/hooks/useRoomPresence";
 import { DEFAULT_BOARD_SIZE, isBoardSize } from "../../features/bingo-room/utils/board";
@@ -59,6 +61,7 @@ export function RoomPage() {
   const [joinError, setJoinError] = useState<string | null>(null);
   const [isJoining, setIsJoining] = useState(false);
   const { reset: resetBoard } = bingoBoard;
+  const chatToasts = useChatToasts(chatMessages);
 
   // roomStatus가 (playing/ended에서) waiting으로 돌아오면 재시작된 것 —
   // 내 보드도 같이 초기화한다(bingoBoard 상태는 useRoomPresence가 모르므로 여기서 처리).
@@ -144,6 +147,7 @@ export function RoomPage() {
   if (roomStatus === "ended") {
     return (
       <RoomLayout chat={chat}>
+        <ChatToastLayer toasts={chatToasts} />
         {reconnectNotice}
         <h1 className="text-xl font-semibold text-slate-900">
           방 <span className="font-mono">{roomId}</span>
@@ -162,6 +166,7 @@ export function RoomPage() {
   if (roomStatus === "playing") {
     return (
       <RoomLayout chat={chat}>
+        <ChatToastLayer toasts={chatToasts} />
         {reconnectNotice}
         <h1 className="text-xl font-semibold text-slate-900">
           방 <span className="font-mono">{roomId}</span>
@@ -183,6 +188,7 @@ export function RoomPage() {
 
   return (
     <RoomLayout chat={chat}>
+      <ChatToastLayer toasts={chatToasts} />
       {reconnectNotice}
       <h1 className="text-xl font-semibold text-slate-900">
         방 <span className="font-mono">{roomId}</span> 대기실
