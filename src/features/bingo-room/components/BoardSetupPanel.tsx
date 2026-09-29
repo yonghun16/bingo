@@ -1,5 +1,5 @@
 // @owner: ai
-import { maxNumberForSize, type BoardGrid } from "../utils/board";
+import { maxNumberForSize, winLineThresholdForSize, type BoardGrid, type BoardSize } from "../utils/board";
 import { BingoBoard } from "./BingoBoard";
 import { NumberPalette } from "./NumberPalette";
 
@@ -17,7 +17,7 @@ interface BoardSetupPanelProps {
 }
 
 /**
- * 1~25 숫자를 5x5 보드에 배치하고 준비 완료를 누르는 화면.
+ * 1~N 숫자를 보드 크기(3x3/4x4/5x5)에 맞게 배치하고 준비 완료를 누르는 화면.
  * 준비 완료 후에도 보드/팔레트는 계속 눌러서 바꿀 수 있고(막아버리면
  * 다시 배치를 바꿀 방법이 없어진다), 바꾸면 상위(RoomPage)가 준비 상태를
  * 자동으로 되돌린다 (002-board-setup 스펙 참고).
@@ -34,11 +34,13 @@ export function BoardSetupPanel({
   onReset,
   onReadyClick,
 }: BoardSetupPanelProps) {
-  const size = board.length;
-  const maxNumber = maxNumberForSize(size as 3 | 4 | 5);
+  const size = board.length as BoardSize;
+  const maxNumber = maxNumberForSize(size);
+  const winLineThreshold = winLineThresholdForSize(size);
 
   return (
     <section className="flex w-full max-w-xs flex-col items-center gap-4">
+      <p className="text-sm text-slate-500">승리 조건: {winLineThreshold}줄 완성</p>
       <BingoBoard board={board} onCellClick={onCellClick} selectedCell={selectedCell} />
       <NumberPalette
         availableNumbers={availableNumbers}
