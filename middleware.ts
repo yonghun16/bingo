@@ -20,7 +20,7 @@ function readBoardSize(url: URL): BoardSize | null {
   return (BOARD_SIZES as readonly number[]).includes(raw) ? (raw as BoardSize) : null;
 }
 
-function buildPreviewHtml(size: BoardSize | null, pageUrl: string): string {
+function buildPreviewHtml(size: BoardSize | null, pageUrl: string, imageUrl: string): string {
   const title = size ? `${size}x${size} 빙고 게임방` : "빙고 게임방";
   const description = "친구가 만든 실시간 빙고 게임방입니다. 버튼을 눌러 참여해주세요!";
 
@@ -33,9 +33,13 @@ function buildPreviewHtml(size: BoardSize | null, pageUrl: string): string {
     <meta property="og:description" content="${description}" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="${pageUrl}" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content="${imageUrl}" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${title}" />
     <meta name="twitter:description" content="${description}" />
+    <meta name="twitter:image" content="${imageUrl}" />
   </head>
   <body>
     <p>${title}</p>
@@ -58,8 +62,9 @@ export default function middleware(request: Request) {
 
   const url = new URL(request.url);
   const size = readBoardSize(url);
+  const imageUrl = `${url.origin}/og-image.png`;
 
-  return new Response(buildPreviewHtml(size, url.toString()), {
+  return new Response(buildPreviewHtml(size, url.toString(), imageUrl), {
     headers: { "content-type": "text/html; charset=utf-8" },
   });
 }
