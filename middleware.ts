@@ -1,5 +1,3 @@
-import { isBoardSize, type BoardSize } from "./src/features/bingo-room/utils/board.ts";
-
 export const config = {
   matcher: "/room/:path*",
 };
@@ -8,9 +6,18 @@ export const config = {
 const LINK_PREVIEW_BOT_PATTERN =
   /kakaotalk-scrap|facebookexternalhit|twitterbot|slackbot|discordbot|telegrambot|line\/|whatsapp|linkedinbot/i;
 
+/**
+ * src/features/bingo-room/utils/board.ts의 BOARD_SIZES와 값이 같아야 한다.
+ * Vercel의 미들웨어 빌드 대상은 별도 번들 경계라서 src/ import를 인라인해
+ * 주지 않으므로(배포 시 ERR_MODULE_NOT_FOUND 발생 확인됨), 이 파일만으로
+ * 완결되도록 값을 복사해서 둔다.
+ */
+const BOARD_SIZES = [3, 4, 5] as const;
+type BoardSize = (typeof BOARD_SIZES)[number];
+
 function readBoardSize(url: URL): BoardSize | null {
   const raw = Number(url.searchParams.get("size"));
-  return isBoardSize(raw) ? raw : null;
+  return (BOARD_SIZES as readonly number[]).includes(raw) ? (raw as BoardSize) : null;
 }
 
 function buildPreviewHtml(size: BoardSize | null, pageUrl: string): string {
