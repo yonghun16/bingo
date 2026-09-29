@@ -18,7 +18,7 @@ export function ChatToastLayer({ toasts }: ChatToastLayerProps) {
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className="w-full max-w-sm rounded-lg bg-slate-900/90 px-4 py-2 text-sm text-white shadow-lg backdrop-blur"
+          className="w-full max-w-sm rounded-lg bg-slate-900/50 px-4 py-2 text-sm text-white shadow-lg backdrop-blur-sm"
         >
           <span className="font-semibold">{toast.nickname}</span>
           <span className="text-slate-400"> · </span>
