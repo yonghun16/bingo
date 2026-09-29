@@ -13,6 +13,7 @@ interface BoardSetupPanelProps {
   onSelectNumber: (value: number) => void;
   onCellClick: (row: number, col: number) => void;
   onReset: () => void;
+  onRandomize: () => void;
   onReadyClick: () => void;
 }
 
@@ -32,6 +33,7 @@ export function BoardSetupPanel({
   onSelectNumber,
   onCellClick,
   onReset,
+  onRandomize,
   onReadyClick,
 }: BoardSetupPanelProps) {
   const size = board.length as BoardSize;
@@ -49,6 +51,13 @@ export function BoardSetupPanel({
         size={size}
       />
       <p className="text-xs text-slate-400">숫자를 먼저 고르거나, 칸을 먼저 선택한 뒤 숫자를 눌러도 배치됩니다.</p>
+      <button
+        type="button"
+        onClick={onRandomize}
+        className="w-full rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 transition hover:bg-emerald-100"
+      >
+        무작위로 채우기
+      </button>
       <div className="flex w-full gap-2">
         <button
           type="button"

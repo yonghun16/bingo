@@ -4,6 +4,7 @@ import {
   MIN_NUMBER,
   clearCellOnBoard,
   createEmptyBoard,
+  createRandomBoard,
   getPlacedNumbers,
   isBoardValid,
   maxNumberForSize,
@@ -40,6 +41,8 @@ interface UseBingoBoardResult {
    */
   placeAt: (row: number, col: number) => void;
   reset: () => void;
+  /** 1~(size*size)를 무작위로 섞어 모든 칸을 한 번에 채운다. */
+  randomize: () => void;
 }
 
 /**
@@ -102,6 +105,12 @@ export function useBingoBoard(roomId: string, size: BoardSize): UseBingoBoardRes
     setSelectedCell(null);
   }, [size]);
 
+  const randomize = useCallback(() => {
+    setBoard(createRandomBoard(size));
+    setSelectedNumber(null);
+    setSelectedCell(null);
+  }, [size]);
+
   return {
     board,
     availableNumbers,
@@ -111,5 +120,6 @@ export function useBingoBoard(roomId: string, size: BoardSize): UseBingoBoardRes
     selectNumber,
     placeAt,
     reset,
+    randomize,
   };
 }

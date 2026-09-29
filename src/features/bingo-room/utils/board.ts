@@ -29,6 +29,26 @@ export function createEmptyBoard(size: BoardSize): BoardGrid {
   return Array.from({ length: size }, () => Array<BoardCell>(size).fill(null));
 }
 
+/** 1~(size*size)를 무작위 순서로 섞어 모든 칸을 한 번에 채운 보드를 만든다. */
+export function createRandomBoard(size: BoardSize): BoardGrid {
+  const maxNumber = maxNumberForSize(size);
+  const numbers = Array.from({ length: maxNumber }, (_, i) => i + MIN_NUMBER);
+  for (let i = numbers.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
+  }
+
+  const board = createEmptyBoard(size);
+  let index = 0;
+  for (let row = 0; row < size; row++) {
+    for (let col = 0; col < size; col++) {
+      board[row][col] = numbers[index];
+      index++;
+    }
+  }
+  return board;
+}
+
 export function getPlacedNumbers(board: BoardGrid): Set<number> {
   const placed = new Set<number>();
   for (const row of board) {

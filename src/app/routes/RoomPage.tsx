@@ -109,6 +109,11 @@ export function RoomPage() {
     if (currentPlayer?.isReady) setReady(false);
   };
 
+  const handleRandomize = () => {
+    bingoBoard.randomize();
+    if (currentPlayer?.isReady) setReady(false);
+  };
+
   const handleReadyClick = () => {
     if (bingoBoard.isValid) setReady(true);
   };
@@ -193,6 +198,7 @@ export function RoomPage() {
         onSelectNumber={bingoBoard.selectNumber}
         onCellClick={handleCellClick}
         onReset={handleReset}
+        onRandomize={handleRandomize}
         onReadyClick={handleReadyClick}
       />
       <div className="w-full max-w-xs">
