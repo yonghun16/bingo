@@ -1,5 +1,6 @@
 // @owner: ai
 import type { BoardGrid } from "../utils/board";
+import { gridColsClass } from "../utils/gridLayout";
 
 interface BingoBoardProps {
   board: BoardGrid;
@@ -13,7 +14,7 @@ interface BingoBoardProps {
 
 export function BingoBoard({ board, onCellClick, disabled = false, markedNumbers, selectedCell }: BingoBoardProps) {
   return (
-    <div className="grid w-full max-w-xs grid-cols-5 gap-1">
+    <div className={`grid w-full max-w-xs gap-1 ${gridColsClass(board.length)}`}>
       {board.map((row, rowIndex) =>
         row.map((cell, colIndex) => {
           const isMarked = cell !== null && markedNumbers?.has(cell) === true;

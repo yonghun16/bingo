@@ -8,7 +8,7 @@ tags:
 depends_on:
 - 002-board-setup
 created_at: 2026-09-19T14:17:59.043506Z
-updated_at: 2026-09-19T15:43:25.749708Z
+updated_at: 2026-09-29T02:20:45.285178Z
 transitions:
 - status: planned
   at: 2026-09-19T15:42:56.624950Z
@@ -41,6 +41,9 @@ transitions:
 - 별도의 `call-number` 중계 이벤트는 두지 않고, 턴 유저 본인이 직접 `number-called`(`auto: false`)를 broadcast하도록 단순화했다(게임흐름.md 동기화 완료). 발신자 검증은 "보내기 전에 스스로 확인"으로 처리한다.
 - "활성 참가자 1명 남을 시 자동 종료"는 실제 game-over 발행 메커니즘이 없는 상태라 이번에는 구현하지 않고 004-game-end-restart로 그대로 미룬다.
 - (002-board-setup 버그 수정) BoardSetupPanel이 준비 완료 상태에서 보드/팔레트를 통째로 비활성화하고 있어서, 재배치로 isReady를 되돌리는 경로 자체가 눌리지 않았다. 보드 상태를 RoomPage로 끌어올리며(게임 진행 중에도 내 보드가 필요해서) 같이 고쳤다 — 이제 준비 완료 후에도 계속 클릭할 수 있고, 클릭하면 정상적으로 isReady가 풀린다.
+
+
+승리에 필요한 완성 줄 수는 보드 크기에 따라 다르다: 3x3=1줄, 4x4=2줄, 5x5=3줄(기존 그대로). 호출 가능한 숫자 범위(1~size²)도 보드 크기를 따른다.
 
 ## Plan
 

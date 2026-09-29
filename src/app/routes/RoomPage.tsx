@@ -1,6 +1,6 @@
 // @owner: ai
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { BoardSetupPanel } from "../../features/bingo-room/components/BoardSetupPanel";
 import { ChatPanel } from "../../features/bingo-room/components/ChatPanel";
 import { GameOverPanel } from "../../features/bingo-room/components/GameOverPanel";
@@ -12,6 +12,7 @@ import { TurnGameplayPanel } from "../../features/bingo-room/components/TurnGame
 import { useBingoBoard } from "../../features/bingo-room/hooks/useBingoBoard";
 import { useRoomPresence } from "../../features/bingo-room/hooks/useRoomPresence";
 import type { JoinRoomResult } from "../../features/bingo-room/hooks/useRoomPresence";
+import { DEFAULT_BOARD_SIZE, isBoardSize } from "../../features/bingo-room/utils/board";
 import { loadSavedNickname, saveNickname } from "../../features/bingo-room/utils/roomStorage";
 
 const JOIN_ERROR_MESSAGE: Record<Exclude<JoinRoomResult, { ok: true }>["reason"], string> = {
@@ -31,8 +32,11 @@ const JOIN_ERROR_MESSAGE: Record<Exclude<JoinRoomResult, { ok: true }>["reason"]
  */
 export function RoomPage() {
   const { roomId } = useParams<{ roomId: string }>();
+  const [searchParams] = useSearchParams();
   const safeRoomId = roomId ?? "";
-  const bingoBoard = useBingoBoard(safeRoomId);
+  const requestedSize = Number(searchParams.get("size"));
+  const boardSize = isBoardSize(requestedSize) ? requestedSize : DEFAULT_BOARD_SIZE;
+  const bingoBoard = useBingoBoard(safeRoomId, boardSize);
   const {
     players,
     host,
@@ -51,7 +55,7 @@ export function RoomPage() {
     callNumber,
     restartGame,
     hasReconnectTimedOut,
-  } = useRoomPresence(safeRoomId, bingoBoard.board);
+  } = useRoomPresence(safeRoomId, bingoBoard.board, boardSize);
   const [joinError, setJoinError] = useState<string | null>(null);
   const [isJoining, setIsJoining] = useState(false);
   const { reset: resetBoard } = bingoBoard;

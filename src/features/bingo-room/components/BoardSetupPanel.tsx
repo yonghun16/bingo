@@ -1,5 +1,5 @@
 // @owner: ai
-import type { BoardGrid } from "../utils/board";
+import { maxNumberForSize, type BoardGrid } from "../utils/board";
 import { BingoBoard } from "./BingoBoard";
 import { NumberPalette } from "./NumberPalette";
 
@@ -34,10 +34,18 @@ export function BoardSetupPanel({
   onReset,
   onReadyClick,
 }: BoardSetupPanelProps) {
+  const size = board.length;
+  const maxNumber = maxNumberForSize(size as 3 | 4 | 5);
+
   return (
     <section className="flex w-full max-w-xs flex-col items-center gap-4">
       <BingoBoard board={board} onCellClick={onCellClick} selectedCell={selectedCell} />
-      <NumberPalette availableNumbers={availableNumbers} selectedNumber={selectedNumber} onSelect={onSelectNumber} />
+      <NumberPalette
+        availableNumbers={availableNumbers}
+        selectedNumber={selectedNumber}
+        onSelect={onSelectNumber}
+        size={size}
+      />
       <p className="text-xs text-slate-400">숫자를 먼저 고르거나, 칸을 먼저 선택한 뒤 숫자를 눌러도 배치됩니다.</p>
       <div className="flex w-full gap-2">
         <button
@@ -57,7 +65,7 @@ export function BoardSetupPanel({
         </button>
       </div>
       {!isValid && !isReady ? (
-        <p className="text-sm text-slate-500">1~25 숫자를 빈칸 없이 모두 배치해주세요.</p>
+        <p className="text-sm text-slate-500">1~{maxNumber} 숫자를 빈칸 없이 모두 배치해주세요.</p>
       ) : null}
       {isReady ? <p className="text-sm text-emerald-600">준비 완료! 다른 참가자를 기다리는 중입니다.</p> : null}
     </section>

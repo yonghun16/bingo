@@ -45,7 +45,12 @@ export function TurnGameplayPanel({
         {isMyTurn ? "내 차례입니다!" : `${currentTurnNickname}님의 차례`} · {remainingSeconds}초
       </p>
       <BingoBoard board={board} onCellClick={() => {}} disabled markedNumbers={markedNumbers} />
-      <NumberCallPad calledNumbers={calledNumbers} disabled={!isMyTurn} onCall={onCallNumber} />
+      <NumberCallPad
+        calledNumbers={calledNumbers}
+        disabled={!isMyTurn}
+        onCall={onCallNumber}
+        size={board.length as 3 | 4 | 5}
+      />
       <p className="text-sm text-slate-500">
         호출된 숫자: {calledNumbers.length > 0 ? calledNumbers.join(", ") : "없음"}
       </p>

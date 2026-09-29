@@ -1,9 +1,13 @@
 // @owner: ai
+import { gridColsClass } from "../utils/gridLayout";
+
 interface NumberPaletteProps {
   availableNumbers: number[];
   selectedNumber: number | null;
   onSelect: (value: number) => void;
   disabled?: boolean;
+  /** 보드 크기(3/4/5) — 숫자 개수(size*size)와 정확히 맞는 격자로 보여주기 위함 */
+  size: number;
 }
 
 export function NumberPalette({
@@ -11,9 +15,10 @@ export function NumberPalette({
   selectedNumber,
   onSelect,
   disabled = false,
+  size,
 }: NumberPaletteProps) {
   return (
-    <div className="grid w-full max-w-xs grid-cols-5 gap-1">
+    <div className={`grid w-full max-w-xs gap-1 ${gridColsClass(size)}`}>
       {availableNumbers.map((n) => (
         <button
           key={n}

@@ -1,14 +1,15 @@
 // @owner: ai
 import { useCallback, useEffect, useState } from "react";
 import {
-  MAX_NUMBER,
   MIN_NUMBER,
   clearCellOnBoard,
   createEmptyBoard,
   getPlacedNumbers,
   isBoardValid,
+  maxNumberForSize,
   placeNumberOnBoard,
   type BoardGrid,
+  type BoardSize,
 } from "../utils/board";
 import { loadSavedBoard, saveBoard } from "../utils/roomStorage";
 
@@ -42,16 +43,17 @@ interface UseBingoBoardResult {
 }
 
 /**
- * 5x5 빙고판에 1~25 숫자를 배치하는 로컬 상태. "숫자 먼저 → 칸"과
- * "칸 먼저 → 숫자" 두 가지 입력 순서를 모두 지원한다.
+ * `size x size` 빙고판에 1~(size*size) 숫자를 배치하는 로컬 상태.
+ * "숫자 먼저 → 칸"과 "칸 먼저 → 숫자" 두 가지 입력 순서를 모두 지원한다.
  * localStorage에도 같이 저장해서, 같은 브라우저로 새로고침해도 배치가
  * 남아있게 한다 — 이 보드는 아무에게도 공유되지 않으므로(게임 종료 전까지),
  * 새로고침 시 복구할 수 있는 곳이 로컬 저장소뿐이다 (006-reconnect-sync 참고).
  *
  * @param roomId - 저장 키로 쓸 방 ID
+ * @param size - 보드 한 변의 칸 수 (3/4/5). 방 만들기 시 정해져 URL로 전달된다.
  */
-export function useBingoBoard(roomId: string): UseBingoBoardResult {
-  const [board, setBoard] = useState<BoardGrid>(() => loadSavedBoard(roomId) ?? createEmptyBoard());
+export function useBingoBoard(roomId: string, size: BoardSize): UseBingoBoardResult {
+  const [board, setBoard] = useState<BoardGrid>(() => loadSavedBoard(roomId) ?? createEmptyBoard(size));
   const [selectedNumber, setSelectedNumber] = useState<number | null>(null);
   const [selectedCell, setSelectedCell] = useState<SelectedCell | null>(null);
 
@@ -59,11 +61,11 @@ export function useBingoBoard(roomId: string): UseBingoBoardResult {
     saveBoard(roomId, board);
   }, [roomId, board]);
 
+  const maxNumber = maxNumberForSize(size);
   const placedNumbers = getPlacedNumbers(board);
-  const availableNumbers = Array.from(
-    { length: MAX_NUMBER - MIN_NUMBER + 1 },
-    (_, index) => index + MIN_NUMBER,
-  ).filter((n) => !placedNumbers.has(n));
+  const availableNumbers = Array.from({ length: maxNumber - MIN_NUMBER + 1 }, (_, index) => index + MIN_NUMBER).filter(
+    (n) => !placedNumbers.has(n),
+  );
 
   const selectNumber = useCallback(
     (value: number) => {
@@ -95,17 +97,17 @@ export function useBingoBoard(roomId: string): UseBingoBoardResult {
   );
 
   const reset = useCallback(() => {
-    setBoard(createEmptyBoard());
+    setBoard(createEmptyBoard(size));
     setSelectedNumber(null);
     setSelectedCell(null);
-  }, []);
+  }, [size]);
 
   return {
     board,
     availableNumbers,
     selectedNumber,
     selectedCell,
-    isValid: isBoardValid(board),
+    isValid: isBoardValid(board, size),
     selectNumber,
     placeAt,
     reset,

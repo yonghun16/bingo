@@ -18,15 +18,20 @@ import type {
   StateSyncPayload,
 } from "../types/events";
 import type { ChatMessage, Player, RoomPresencePayload } from "../types/domain";
-import { MAX_NUMBER, MIN_NUMBER, countCompletedLines, type BoardGrid } from "../utils/board";
+import {
+  MIN_NUMBER,
+  countCompletedLines,
+  maxNumberForSize,
+  winLineThresholdForSize,
+  type BoardGrid,
+  type BoardSize,
+} from "../utils/board";
 
 const ROOM_CAPACITY = 5;
 const MIN_PLAYERS_TO_START = 2;
 const TURN_DURATION_MS = 10_000;
-const BINGO_LINE_THRESHOLD = 3;
 const BINGO_GRACE_MS = 300;
 const REQUEST_STATE_TIMEOUT_MS = 3_000;
-const ALL_NUMBERS = Array.from({ length: MAX_NUMBER - MIN_NUMBER + 1 }, (_, i) => i + MIN_NUMBER);
 
 export type JoinRoomResult =
   | { ok: true }
@@ -103,9 +108,12 @@ function toPlayers(state: PresenceState): Player[] {
  * (001-room-lifecycle, 002-board-setup, 003-turn-gameplay, 004-game-end-restart 스펙 참고)
  *
  * @param roomId - 방 ID
- * @param board - 이 클라이언트의 빙고판(5x5). 세팅 전이면 null.
+ * @param board - 이 클라이언트의 빙고판. 세팅 전이면 null.
+ * @param boardSize - 보드 한 변의 칸 수(3/4/5). 호출 가능한 숫자 범위와 승리에
+ * 필요한 줄 수(`winLineThresholdForSize`)를 정한다. 방마다 초대 링크의
+ * 쿼리 파라미터로 고정되므로 모든 참가자가 동일한 값을 쓴다.
  */
-export function useRoomPresence(roomId: string, board: BoardGrid | null): UseRoomPresenceResult {
+export function useRoomPresence(roomId: string, board: BoardGrid | null, boardSize: BoardSize): UseRoomPresenceResult {
   const [players, setPlayers] = useState<Player[]>([]);
   const [currentNickname, setCurrentNickname] = useState<string | null>(null);
   const [roomStatus, setRoomStatus] = useState<"waiting" | "playing" | "ended">("waiting");
@@ -576,10 +584,13 @@ export function useRoomPresence(roomId: string, board: BoardGrid | null): UseRoo
     if (turnStartedAt === null || turnSeq === null) return;
 
     const resolvingTurnSeq = turnSeq;
+    const maxNumber = maxNumberForSize(boardSize);
     const delay = Math.max(0, turnStartedAt + TURN_DURATION_MS - Date.now());
     const timeoutId = setTimeout(() => {
       if (appliedTurnSeqRef.current >= resolvingTurnSeq) return; // 그 사이 수동으로 이미 호출됨
-      const remaining = ALL_NUMBERS.filter((n) => !calledNumbersRef.current.includes(n));
+      const remaining = Array.from({ length: maxNumber - MIN_NUMBER + 1 }, (_, i) => i + MIN_NUMBER).filter(
+        (n) => !calledNumbersRef.current.includes(n),
+      );
       if (remaining.length === 0) return;
 
       const channel = channelRef.current;
@@ -597,7 +608,7 @@ export function useRoomPresence(roomId: string, board: BoardGrid | null): UseRoo
     }, delay);
 
     return () => clearTimeout(timeoutId);
-  }, [roomStatus, currentPlayer, host, turnStartedAt, turnSeq, applyNumberCalled]);
+  }, [roomStatus, currentPlayer, host, turnStartedAt, turnSeq, applyNumberCalled, boardSize]);
 
   // 호스트만: 이탈로 활성 참가자가 1명만 남으면 유예 없이 즉시 게임을 종료한다.
   useEffect(() => {
@@ -624,7 +635,7 @@ export function useRoomPresence(roomId: string, board: BoardGrid | null): UseRoo
     [board, markedNumbers],
   );
 
-  // 완성 라인 수가 바뀔 때마다 전원에게 공유하고, 3줄 이상이면 bingo-completed를 한 번만 보낸다.
+  // 완성 라인 수가 바뀔 때마다 전원에게 공유하고, 보드 크기별 기준 줄 수 이상이면 bingo-completed를 한 번만 보낸다.
   useEffect(() => {
     if (roomStatus !== "playing") return;
     const channel = channelRef.current;
@@ -635,7 +646,7 @@ export function useRoomPresence(roomId: string, board: BoardGrid | null): UseRoo
     selfPayloadRef.current = next;
     void trackPresence(channel, next);
 
-    if (completedLines >= BINGO_LINE_THRESHOLD && !hasBingoCompletedRef.current) {
+    if (completedLines >= winLineThresholdForSize(boardSize) && !hasBingoCompletedRef.current) {
       hasBingoCompletedRef.current = true;
       const payload: BingoCompletedPayload = {
         nickname: currentNickname ?? "",
@@ -644,7 +655,7 @@ export function useRoomPresence(roomId: string, board: BoardGrid | null): UseRoo
       };
       void broadcast(channel, "bingo-completed", payload);
     }
-  }, [completedLines, roomStatus, currentNickname]);
+  }, [completedLines, roomStatus, currentNickname, boardSize]);
 
   return {
     players,
