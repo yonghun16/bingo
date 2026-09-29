@@ -1,6 +1,6 @@
 // @owner: ai
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { BoardSetupPanel } from "../../features/bingo-room/components/BoardSetupPanel";
 import { ChatPanel } from "../../features/bingo-room/components/ChatPanel";
 import { ChatToastLayer } from "../../features/bingo-room/components/ChatToastLayer";
@@ -190,9 +190,14 @@ export function RoomPage() {
     <RoomLayout chat={chat}>
       <ChatToastLayer toasts={chatToasts} />
       {reconnectNotice}
-      <h1 className="text-xl font-semibold text-slate-900">
-        방 <span className="font-mono">{roomId}</span> 대기실
-      </h1>
+      <div className="flex w-full items-center justify-between">
+        <h1 className="text-xl font-semibold text-slate-900">
+          방 <span className="font-mono">{roomId}</span> 대기실
+        </h1>
+        <Link to="/" className="text-sm text-slate-500 underline-offset-2 hover:underline">
+          타이틀로 돌아가기
+        </Link>
+      </div>
       <InviteLinkBox inviteUrl={window.location.href} />
       <BoardSetupPanel
         board={bingoBoard.board}
