@@ -3,7 +3,6 @@ import { useCountdownSeconds } from "../hooks/useCountdownSeconds";
 import type { Player } from "../types/domain";
 import { winLineThresholdForSize, type BoardGrid, type BoardSize } from "../utils/board";
 import { BingoBoard } from "./BingoBoard";
-import { NumberCallPad } from "./NumberCallPad";
 import { ParticipantList } from "./ParticipantList";
 
 const TURN_DURATION_MS = 10_000;
@@ -42,16 +41,27 @@ export function TurnGameplayPanel({
   const winLineThreshold = winLineThresholdForSize(size);
   const myCompletedLines = players.find((player) => player.id === currentPlayerId)?.completedLines ?? 0;
 
+  const handleCellClick = (row: number, col: number) => {
+    if (!isMyTurn) return;
+    const value = board[row][col];
+    if (value === null || markedNumbers.has(value)) return;
+    onCallNumber(value);
+  };
+
   return (
     <section className="flex w-full max-w-xs flex-col items-center gap-4">
       <p className="text-center font-medium text-slate-800">
-        {isMyTurn ? "내 차례입니다!" : `${currentTurnNickname}님의 차례`} · {remainingSeconds}초
+        {isMyTurn ? "내 차례입니다! 숫자를 눌러 호출하세요" : `${currentTurnNickname}님의 차례`} · {remainingSeconds}초
       </p>
       <p className="text-sm text-slate-500">
         승리 조건: {winLineThreshold}줄 완성 (내 진행: {myCompletedLines}/{winLineThreshold}줄)
       </p>
-      <BingoBoard board={board} onCellClick={() => {}} disabled markedNumbers={markedNumbers} />
-      <NumberCallPad calledNumbers={calledNumbers} disabled={!isMyTurn} onCall={onCallNumber} size={size} />
+      <BingoBoard
+        board={board}
+        onCellClick={handleCellClick}
+        disabled={!isMyTurn}
+        markedNumbers={markedNumbers}
+      />
       <p className="text-sm text-slate-500">
         호출된 숫자: {calledNumbers.length > 0 ? calledNumbers.join(", ") : "없음"}
       </p>
