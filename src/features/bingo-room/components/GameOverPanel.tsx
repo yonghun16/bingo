@@ -1,4 +1,5 @@
 // @owner: ai
+import { Link } from "react-router-dom";
 import type { Player } from "../types/domain";
 import type { BoardGrid } from "../utils/board";
 import { BingoBoard } from "./BingoBoard";
@@ -28,13 +29,21 @@ export function GameOverPanel({ winnerIds, players, revealedBoards, calledNumber
         🎉 {winnerNicknames.join(", ") || "?"}
         {isTie ? "님이 공동 우승했습니다!" : "님이 우승했습니다!"}
       </p>
-      <button
-        type="button"
-        onClick={onRestart}
-        className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700"
-      >
-        다시 하기
-      </button>
+      <div className="flex gap-2">
+        <button
+          type="button"
+          onClick={onRestart}
+          className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700"
+        >
+          다시 하기
+        </button>
+        <Link
+          to="/"
+          className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+        >
+          새 게임 만들기
+        </Link>
+      </div>
       <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
         {players.map((player) => {
           const revealedBoard = revealedBoards[player.id];
