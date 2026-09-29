@@ -7,6 +7,7 @@ interface BoardSetupPanelProps {
   board: BoardGrid;
   availableNumbers: number[];
   selectedNumber: number | null;
+  selectedCell: { row: number; col: number } | null;
   isValid: boolean;
   isReady: boolean;
   onSelectNumber: (value: number) => void;
@@ -25,6 +26,7 @@ export function BoardSetupPanel({
   board,
   availableNumbers,
   selectedNumber,
+  selectedCell,
   isValid,
   isReady,
   onSelectNumber,
@@ -34,8 +36,9 @@ export function BoardSetupPanel({
 }: BoardSetupPanelProps) {
   return (
     <section className="flex w-full max-w-xs flex-col items-center gap-4">
-      <BingoBoard board={board} onCellClick={onCellClick} />
+      <BingoBoard board={board} onCellClick={onCellClick} selectedCell={selectedCell} />
       <NumberPalette availableNumbers={availableNumbers} selectedNumber={selectedNumber} onSelect={onSelectNumber} />
+      <p className="text-xs text-slate-400">숫자를 먼저 고르거나, 칸을 먼저 선택한 뒤 숫자를 눌러도 배치됩니다.</p>
       <div className="flex w-full gap-2">
         <button
           type="button"

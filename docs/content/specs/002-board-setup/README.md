@@ -7,7 +7,7 @@ tags:
 depends_on:
 - 001-room-lifecycle
 created_at: 2026-09-19T14:17:54.142230Z
-updated_at: 2026-09-19T15:43:31.206647Z
+updated_at: 2026-09-29T01:53:49.731619Z
 transitions:
 - status: planned
   at: 2026-09-19T15:34:21.867764Z
@@ -33,6 +33,9 @@ transitions:
 
 
 - 각 참가자는 자신의 Presence payload에 `roomStatus`(waiting/playing)도 함께 싣는다. game-started를 받으면(혹은 호스트가 직접 시작을 결정하면) 자신의 presence를 `roomStatus: 'playing'`으로 다시 track한다 — 001-room-lifecycle의 "이미 시작된 방 입장 차단"이 이 값으로 동작한다.
+
+
+숫자 배치는 두 가지 순서를 모두 지원한다: ① 팔레트에서 숫자를 먼저 고르고 빈 칸을 클릭 ② 빈 칸을 먼저 클릭해 "다음 숫자를 넣을 자리"로 선택해두고 팔레트에서 숫자를 클릭. 두 상태(`selectedNumber`, `selectedCell`) 중 하나만 동시에 값을 가질 수 있고, 어느 쪽이든 선택 후 배치가 끝나면 함께 초기화된다(`useBingoBoard` 참고).
 
 ## Plan
 

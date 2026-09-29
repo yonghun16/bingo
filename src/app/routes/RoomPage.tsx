@@ -183,6 +183,7 @@ export function RoomPage() {
         board={bingoBoard.board}
         availableNumbers={bingoBoard.availableNumbers}
         selectedNumber={bingoBoard.selectedNumber}
+        selectedCell={bingoBoard.selectedCell}
         isValid={bingoBoard.isValid}
         isReady={currentPlayer.isReady}
         onSelectNumber={bingoBoard.selectNumber}
