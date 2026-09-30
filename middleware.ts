@@ -12,7 +12,7 @@ const LINK_PREVIEW_BOT_PATTERN =
  * 주지 않으므로(배포 시 ERR_MODULE_NOT_FOUND 발생 확인됨), 이 파일만으로
  * 완결되도록 값을 복사해서 둔다.
  */
-const BOARD_SIZES = [4, 5, 6, 7] as const;
+const BOARD_SIZES = [3, 4, 5, 6, 7] as const;
 type BoardSize = (typeof BOARD_SIZES)[number];
 
 function readBoardSize(url: URL): BoardSize | null {

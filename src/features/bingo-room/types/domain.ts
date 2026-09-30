@@ -24,7 +24,7 @@ export interface Player {
   /** Presence key (닉네임 기반) */
   id: string;
   nickname: string;
-  /** 방 크기(4x4/5x5/6x6/7x7)에 맞는 보드. null이면 아직 세팅 중 */
+  /** 방 크기(3x3/4x4/5x5/6x6/7x7)에 맞는 보드. null이면 아직 세팅 중 */
   board: number[][] | null;
   markedNumbers: number[];
   isReady: boolean;
