@@ -654,8 +654,9 @@ export function useRoomPresence(roomId: string, board: BoardGrid | null, boardSi
         turnSeq: appliedTurnSeqRef.current,
       };
       void broadcast(channel, "bingo-completed", payload);
+      applyBingoCompleted(payload);
     }
-  }, [completedLines, roomStatus, currentNickname, boardSize]);
+  }, [completedLines, roomStatus, currentNickname, boardSize, applyBingoCompleted]);
 
   return {
     players,
