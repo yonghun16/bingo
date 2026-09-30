@@ -3,7 +3,7 @@ title: Supabase Realtime 핵심 개념
 tags: [튜토리얼]
 description: Channel / Presence / Broadcast가 뭔지, 이 프로젝트가 서버 없이 실시간 동기화를 만든 방법
 created: 2026-09-20
-updated: 2026-09-20
+updated: 2026-09-30
 status: active
 ---
 
@@ -36,16 +36,14 @@ function roomChannelName(roomId: string): string {
   return `bingo-room-${roomId}`;
 }
 
-export function subscribeToRoomChannel(roomId: string, nickname: string): RealtimeChannel {
-  const channel = getSupabaseClient().channel(roomChannelName(roomId), {
+export function createRoomChannel(roomId: string, nickname: string): RealtimeChannel {
+  return getSupabaseClient().channel(roomChannelName(roomId), {
     config: { presence: { key: nickname } },
   });
-  channel.subscribe();
-  return channel;
 }
 ```
 
-`supabase.channel(이름, 옵션)`으로 채널을 만들고 `.subscribe()`를 부르면, 그 순간부터 이 채널에 오는 이벤트를 받을 수 있습니다. **채널 이름이 같은 클라이언트끼리만 서로 통신합니다** — 그래서 방마다 다른 이름(`bingo-room-{roomId}`)을 쓰면, 방 A의 이벤트가 방 B로 새는 일이 없습니다.
+`supabase.channel(이름, 옵션)`으로 채널을 "만들기"만 하고, 여기서는 아직 `.subscribe()`를 부르지 않습니다 — 이유는 바로 아래 5번에서 다룹니다(실제로 겪은 버그입니다). **채널 이름이 같은 클라이언트끼리만 서로 통신합니다** — 그래서 방마다 다른 이름(`bingo-room-{roomId}`)을 쓰면, 방 A의 이벤트가 방 B로 새는 일이 없습니다.
 
 `config.presence.key`는 "이 채널 안에서 나를 어떤 이름으로 식별할지"입니다. 이 프로젝트는 닉네임을 그대로 key로 씁니다 — 그래서 "닉네임은 방 안에서 유일해야 한다"는 규칙이 자연스럽게 생깁니다(001 스펙).
 
@@ -96,9 +94,20 @@ applyNumberCalled(payload);   // 내가 보낸 것도 내가 직접 한 번 더 
 
 "보내기"와 "내 화면에 반영하기"를 항상 같이 해줘야 한다는 뜻입니다. 이걸 깜빡하면 "정작 이벤트를 보낸 사람의 화면만 안 바뀌는" 버그가 생깁니다.
 
-## 5. `subscribe()`의 상태(status) 콜백을 기다리는 이유
+## 5. `subscribe()`는 모든 리스너를 등록한 뒤 딱 한 번만 — 실제로 겪은 버그
+
+Supabase Realtime은 **`channel.subscribe()`를 호출한 뒤에는 `channel.on(...)`으로 리스너를 더 추가할 수 없습니다**("cannot add ... callbacks after subscribe()" 에러). 처음엔 `createRoomChannel`(당시 이름은 `subscribeToRoomChannel`) 안에서 채널을 만들자마자 바로 `.subscribe()`를 불렀는데, 그 뒤에 `join()`이 `channel.on("presence", ...)` 같은 리스너를 추가하려다 이 에러로 막혔습니다.
+
+해결책은 **"채널 만들기"와 "구독 시작하기"를 분리**하는 것입니다. `createRoomChannel`은 채널 객체만 만들어 돌려주고, 호출하는 쪽(`join()`)이 필요한 `.on()` 리스너를 전부 등록한 다음 마지막에 딱 한 번 `.subscribe(콜백)`을 부릅니다.
 
 ```ts
+// useRoomPresence.ts의 join() 안
+const channel = createRoomChannel(roomId, nickname);
+
+channel.on("presence", { event: "sync" }, () => { /* ... */ });
+channel.on("broadcast", { event: "game-started" }, () => { /* ... */ });
+// ... 필요한 리스너를 전부 먼저 등록 ...
+
 channel.subscribe((status) => {
   if (status !== "SUBSCRIBED") return;
   const state = channel.presenceState<RoomPresencePayload>();
@@ -106,7 +115,9 @@ channel.subscribe((status) => {
 });
 ```
 
-채널 구독은 즉시 완료되지 않고 네트워크를 타는 비동기 작업입니다. `SUBSCRIBED` 상태가 되기 전에 `presenceState()`를 읽으면 아직 다른 사람들의 정보가 도착하지 않았을 수 있습니다. 그래서 "완전히 연결된 뒤"에만 정원/중복 체크 같은 판단을 합니다.
+채널 구독은 즉시 완료되지 않고 네트워크를 타는 비동기 작업이기도 합니다. `SUBSCRIBED` 상태가 되기 전에 `presenceState()`를 읽으면 아직 다른 사람들의 정보가 도착하지 않았을 수 있습니다. 그래서 "완전히 연결된 뒤"에만 정원/중복 체크 같은 판단을 합니다.
+
+**배울 점**: 라이브러리가 "한 번 호출하면 이후 다른 호출을 막는" 제약을 두는 경우가 있습니다. 이런 제약은 문서를 안 읽고 에러 메시지만 보고도 원인을 찾을 수 있을 만큼 에러 문구가 친절한 편이니, 당황하지 말고 에러 메시지부터 정독하는 습관이 도움이 됩니다.
 
 ## 관련 문서
 - [[00-학습-가이드]]

@@ -3,7 +3,7 @@ title: Supabase 프로젝트 설정
 tags: [가이드]
 description: 빙고 게임을 실제로 실행해보기 위해 Supabase 프로젝트를 만들고 .env를 채우는 절차
 created: 2026-09-20
-updated: 2026-09-20
+updated: 2026-09-30
 status: active
 ---
 
@@ -21,11 +21,13 @@ status: active
 
 ## 2. API 키/URL 확보
 
-1. 프로젝트 대시보드 좌측 사이드바에서 **Project Settings → API**로 이동한다.
+> Supabase 대시보드는 메뉴 위치와 키 이름을 종종 바꾼다(예: "anon public" 키가 "Publishable key"로, URL 항목이 "Integrations → Data API"로 이동한 적이 있었다). 아래 메뉴명이 안 보이면 **Settings** 아래에서 "API"/"API Keys"가 들어간 항목을 찾아보면 된다 — 찾아야 하는 값 자체(공개해도 되는 URL + 공개용 키)는 바뀌지 않는다.
+
+1. 프로젝트 대시보드에서 **Settings → API** (또는 **API Keys**)로 이동한다.
 2. 아래 두 값을 복사해둔다.
-   - **Project URL** → `.env`의 `VITE_SUPABASE_URL`
-   - **anon public** 키 → `.env`의 `VITE_SUPABASE_ANON_KEY`
-3. **`service_role` 키는 절대 쓰지 않는다** — 서버 전용 관리자 키로, 클라이언트(브라우저) 코드에 넣으면 안 된다. 이 프로젝트는 `anon` 키만으로 동작한다.
+   - **Project URL**(또는 Data API URL) → `.env`의 `VITE_SUPABASE_URL`
+   - **anon public** 키(또는 **Publishable key**) → `.env`의 `VITE_SUPABASE_ANON_KEY`
+3. **`service_role`(또는 Secret) 키는 절대 쓰지 않는다** — 서버 전용 관리자 키로, 클라이언트(브라우저) 코드에 넣으면 안 된다. 이 프로젝트는 공개용(anon/publishable) 키만으로 동작한다.
 
 ## 3. 별도 Realtime 설정은 필요 없다
 
