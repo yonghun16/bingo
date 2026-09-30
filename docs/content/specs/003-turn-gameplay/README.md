@@ -8,7 +8,7 @@ tags:
 depends_on:
 - 002-board-setup
 created_at: 2026-09-19T14:17:59.043506Z
-updated_at: 2026-09-29T02:20:45.285178Z
+updated_at: 2026-09-30T04:15:23.479987Z
 transitions:
 - status: planned
   at: 2026-09-19T15:42:56.624950Z
@@ -26,8 +26,8 @@ transitions:
 
 - 현재 턴 유저는 10초 안에 `call-number`를 broadcast해야 한다.
 - 10초 안에 호출하지 않으면 호스트 클라이언트가 남은 숫자 중 랜덤으로 골라 `number-called`를 broadcast한다(payload에 `auto: true` 표시).
-- 모든 클라이언트는 `number-called` 수신 시 로컬 보드를 마킹하고 완성 라인 수(가로5+세로5+대각선2=12줄)를 재계산한다.
-- 3줄을 완성한 클라이언트는 `bingo-completed`를 broadcast한다. 여러 명의 동시 우승 최종 판정은 004(game-end-restart)에서 다룬다.
+- 모든 클라이언트는 `number-called` 수신 시 로컬 보드를 마킹하고 완성 라인 수(가로+세로+대각선2줄, 총 줄 수는 보드 크기에 따라 다름)를 재계산한다.
+- 필요한 줄 수를 완성한 클라이언트는 `bingo-completed`를 broadcast한다. 여러 명의 동시 우승 최종 판정은 004(game-end-restart)에서 다룬다.
 - 호스트가 연결을 끊으면 Presence `joinedAt` 기준 다음 순번이 자동으로 호스트 역할(턴 타이머 관리)을 이어받는다. 호스트 판단 로직은 001(room-lifecycle) 참고.
 
 
@@ -43,7 +43,7 @@ transitions:
 - (002-board-setup 버그 수정) BoardSetupPanel이 준비 완료 상태에서 보드/팔레트를 통째로 비활성화하고 있어서, 재배치로 isReady를 되돌리는 경로 자체가 눌리지 않았다. 보드 상태를 RoomPage로 끌어올리며(게임 진행 중에도 내 보드가 필요해서) 같이 고쳤다 — 이제 준비 완료 후에도 계속 클릭할 수 있고, 클릭하면 정상적으로 isReady가 풀린다.
 
 
-승리에 필요한 완성 줄 수는 보드 크기에 따라 다르다: 3x3=1줄, 4x4=2줄, 5x5=3줄(기존 그대로). 호출 가능한 숫자 범위(1~size²)도 보드 크기를 따른다.
+승리에 필요한 완성 줄 수는 보드 크기에 따라 다르다: 4x4=2줄, 5x5=3줄, 6x6=4줄, 7x7=5줄. 호출 가능한 숫자 범위(1~size²)도 보드 크기를 따른다.
 
 ## Plan
 
@@ -51,7 +51,7 @@ transitions:
 - [x] 숫자 선택 UI(턴일 때만 활성화, 이미 호출된 숫자는 비활성화) → `call-number` broadcast
 - [x] 호스트: 10초 타이머 관리 + 시간 초과 자동 호출
 - [x] `number-called` 수신 → 보드 마킹 + 라인 완성 수 계산
-- [x] 3줄 완성 시 `bingo-completed` broadcast
+- [x] 필요한 줄 수 완성 시 `bingo-completed` broadcast
 - [ ] 호스트 이탈 시 다음 순번이 타이머 역할을 승계하는지 확인
 
 
@@ -65,7 +65,7 @@ transitions:
 - [ ] 여러 탭에서 턴이 입장 순서대로 정확히 넘어감
 - [ ] 10초 초과 시 호스트가 자동으로 숫자를 호출함
 - [ ] 숫자 호출 시 전원의 보드에 동일하게 마킹됨
-- [ ] 3줄 완성 시 `bingo-completed`가 정상 발생함
+- [ ] 필요한 줄 수 완성 시 `bingo-completed`가 정상 발생함
 - [ ] 호스트 탭을 강제로 닫아도 다음 순번이 타이머를 이어받아 게임이 계속 진행됨
 
 - [ ] 수동 호출과 자동 호출이 거의 동시에 발생해도 같은 턴에서 두 번 마킹되지 않음

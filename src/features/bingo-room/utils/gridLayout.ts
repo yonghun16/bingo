@@ -7,9 +7,10 @@ import type { BoardSize } from "./board";
  * 전부 리터럴로 나열해두고 조회만 동적으로 한다.
  */
 const GRID_COLS_CLASS: Record<BoardSize, string> = {
-  3: "grid-cols-3",
   4: "grid-cols-4",
   5: "grid-cols-5",
+  6: "grid-cols-6",
+  7: "grid-cols-7",
 };
 
 /** 보드 크기에 맞는 Tailwind `grid-cols-N` 클래스를 반환한다. */

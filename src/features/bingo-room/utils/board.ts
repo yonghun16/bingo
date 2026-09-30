@@ -1,14 +1,14 @@
 // @owner: ai
 
 /** 방 만들기 화면에서 고를 수 있는 보드 크기 */
-export const BOARD_SIZES = [3, 4, 5] as const;
+export const BOARD_SIZES = [4, 5, 6, 7] as const;
 export type BoardSize = (typeof BOARD_SIZES)[number];
 export const DEFAULT_BOARD_SIZE: BoardSize = 5;
 
 export const MIN_NUMBER = 1;
 
 /** 보드 크기별 승리에 필요한 완성 줄 수 (게임흐름.md 참고) */
-const WIN_LINE_THRESHOLD: Record<BoardSize, number> = { 3: 1, 4: 2, 5: 3 };
+const WIN_LINE_THRESHOLD: Record<BoardSize, number> = { 4: 2, 5: 3, 6: 4, 7: 5 };
 
 export function isBoardSize(value: number): value is BoardSize {
   return (BOARD_SIZES as readonly number[]).includes(value);
