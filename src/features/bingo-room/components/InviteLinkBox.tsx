@@ -34,14 +34,14 @@ export function InviteLinkBox({ inviteUrl }: InviteLinkBoxProps) {
       <button
         type="button"
         onClick={handleCopy}
-        className="w-full max-w-xs rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-400"
+        className="flex-1 rounded-lg bg-emerald-500 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-emerald-400"
       >
         초대 링크 공유
       </button>
       {showToast ? (
         <div className="pointer-events-none fixed inset-x-0 top-4 z-50 flex justify-center px-4">
           <div className="w-full max-w-sm rounded-lg bg-white/95 px-4 py-2 text-center text-sm text-slate-900 shadow-lg">
-            초대 주소가 복사되었습니다. 채팅방 등에 붙여넣어 친구들을 초대해 보세요!
+            🔗 초대 링크 복사 완료! 친구들에게 보내고 같이 빙고해요 🎉
           </div>
         </div>
       ) : null}

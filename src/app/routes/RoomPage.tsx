@@ -190,18 +190,20 @@ export function RoomPage() {
     <RoomLayout chat={chat}>
       <ChatToastLayer toasts={chatToasts} />
       {reconnectNotice}
-      <div className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex w-full flex-col gap-2">
         <h1 className="text-xl font-semibold text-white">
           방 <span className="font-mono">{roomId}</span> 대기실
         </h1>
-        <Link
-          to="/"
-          className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-300 shadow-sm transition hover:bg-slate-700"
-        >
-          ← 타이틀로 돌아가기
-        </Link>
+        <div className="flex w-full gap-2">
+          <InviteLinkBox inviteUrl={window.location.href} />
+          <Link
+            to="/"
+            className="flex-1 rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-center text-sm font-medium text-slate-300 shadow-sm transition hover:bg-slate-700"
+          >
+            ← 타이틀로
+          </Link>
+        </div>
       </div>
-      <InviteLinkBox inviteUrl={window.location.href} />
       <BoardSetupPanel
         board={bingoBoard.board}
         availableNumbers={bingoBoard.availableNumbers}
