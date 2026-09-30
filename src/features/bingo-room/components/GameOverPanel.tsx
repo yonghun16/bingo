@@ -47,17 +47,28 @@ export function GameOverPanel({ winnerIds, players, revealedBoards, calledNumber
       <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
         {players.map((player) => {
           const revealedBoard = revealedBoards[player.id];
+          const isWinner = winnerIds.includes(player.id);
           return (
             <div
               key={player.id}
-              className="flex flex-col items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/60 p-3"
+              className={`flex flex-col items-center gap-2 rounded-lg border p-3 ${
+                isWinner
+                  ? "border-amber-400/60 bg-slate-900/60 shadow-[0_0_16px_rgba(251,191,36,0.25)]"
+                  : "border-slate-800 bg-slate-900/60"
+              }`}
             >
               <p className="text-sm font-medium text-slate-200">
                 {player.nickname}
-                {winnerIds.includes(player.id) ? " 🏆" : ""}
+                {isWinner ? " 🏆" : ""}
               </p>
               {revealedBoard ? (
-                <BingoBoard board={revealedBoard} onCellClick={() => {}} disabled markedNumbers={calledSet} />
+                <BingoBoard
+                  board={revealedBoard}
+                  onCellClick={() => {}}
+                  disabled
+                  markedNumbers={calledSet}
+                  markedVariant={isWinner ? "gold" : "emerald"}
+                />
               ) : (
                 <p className="text-sm text-slate-500">보드를 불러오는 중...</p>
               )}
