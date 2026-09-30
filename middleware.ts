@@ -20,8 +20,29 @@ function readBoardSize(url: URL): BoardSize | null {
   return (BOARD_SIZES as readonly number[]).includes(raw) ? (raw as BoardSize) : null;
 }
 
-function buildPreviewHtml(size: BoardSize | null, pageUrl: string, imageUrl: string): string {
-  const title = size ? `${size}x${size} 빙고 게임방` : "빙고 게임방";
+const MAX_HOST_NAME_LENGTH = 20;
+
+function readHostName(url: URL): string | null {
+  const raw = url.searchParams.get("host")?.trim();
+  if (!raw) return null;
+  return raw.length > MAX_HOST_NAME_LENGTH ? `${raw.slice(0, MAX_HOST_NAME_LENGTH)}…` : raw;
+}
+
+/** HTML에 그대로 꽂아 넣기 전에 사용자 입력(닉네임 등)을 이스케이프한다. */
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function buildPreviewHtml(size: BoardSize | null, hostName: string | null, pageUrl: string, imageUrl: string): string {
+  const sizeLabel = size ? `${size}x${size} ` : "";
+  const title = hostName
+    ? `${escapeHtml(hostName)}님이 만든 ${sizeLabel}빙고 게임방`
+    : `${sizeLabel}빙고 게임방`;
   const description = "친구가 만든 실시간 빙고 게임방입니다. 버튼을 눌러 참여해주세요!";
 
   return `<!doctype html>
@@ -50,9 +71,9 @@ function buildPreviewHtml(size: BoardSize | null, pageUrl: string, imageUrl: str
 
 /**
  * `/room/:roomId` 주소를 링크 미리보기 크롤러(카톡 등)가 요청하면, 보드
- * 크기(`?size=`)를 반영한 og 메타태그가 담긴 정적 HTML을 대신 응답한다.
- * 실제 사용자(일반 브라우저)의 요청은 그대로 통과시켜 평소처럼 SPA가
- * 렌더링되게 한다.
+ * 크기(`?size=`)와 방장 닉네임(`?host=`, 있으면)을 반영한 og 메타태그가
+ * 담긴 정적 HTML을 대신 응답한다. 실제 사용자(일반 브라우저)의 요청은
+ * 그대로 통과시켜 평소처럼 SPA가 렌더링되게 한다.
  */
 export default function middleware(request: Request) {
   const userAgent = request.headers.get("user-agent") ?? "";
@@ -62,9 +83,10 @@ export default function middleware(request: Request) {
 
   const url = new URL(request.url);
   const size = readBoardSize(url);
+  const hostName = readHostName(url);
   const imageUrl = `${url.origin}/og-image.png`;
 
-  return new Response(buildPreviewHtml(size, url.toString(), imageUrl), {
+  return new Response(buildPreviewHtml(size, hostName, url.toString(), imageUrl), {
     headers: { "content-type": "text/html; charset=utf-8" },
   });
 }

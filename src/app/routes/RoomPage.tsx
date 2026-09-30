@@ -34,7 +34,7 @@ const JOIN_ERROR_MESSAGE: Record<Exclude<JoinRoomResult, { ok: true }>["reason"]
  */
 export function RoomPage() {
   const { roomId } = useParams<{ roomId: string }>();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const safeRoomId = roomId ?? "";
   const requestedSize = Number(searchParams.get("size"));
   const boardSize = isBoardSize(requestedSize) ? requestedSize : DEFAULT_BOARD_SIZE;
@@ -97,6 +97,17 @@ export function RoomPage() {
     autoJoinStartedRef.current = true;
     void attemptJoin(saved);
   }, [currentPlayer, attemptJoin, safeRoomId]);
+
+  // 방장(호스트)이면 초대 링크 미리보기에 이름을 띄울 수 있도록 URL에
+  // ?host=닉네임을 반영해둔다 — InviteLinkBox가 공유하는 window.location.href에
+  // 자연스럽게 포함된다.
+  useEffect(() => {
+    if (!currentPlayer || !host || currentPlayer.id !== host.id) return;
+    if (searchParams.get("host") === currentPlayer.nickname) return;
+    const next = new URLSearchParams(searchParams);
+    next.set("host", currentPlayer.nickname);
+    setSearchParams(next, { replace: true });
+  }, [currentPlayer, host, searchParams, setSearchParams]);
 
   if (!roomId) {
     return null;
