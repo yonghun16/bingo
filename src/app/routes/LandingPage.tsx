@@ -64,19 +64,19 @@ export function LandingPage() {
 
         <div className="flex w-full max-w-xs flex-col items-center gap-3 rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-xl backdrop-blur">
           <p className="text-sm font-medium text-slate-300">보드 크기</p>
-          <div className="flex gap-2">
+          <div className="flex gap-1.5">
             {BOARD_SIZES.map((option) => (
               <button
                 key={option}
                 type="button"
                 onClick={() => setSize(option)}
-                className={`rounded-lg border px-4 py-2 text-sm font-medium transition ${
+                className={`rounded-lg border px-2.5 py-2 text-sm font-medium transition ${
                   size === option
                     ? "border-emerald-400 bg-emerald-500 text-white"
                     : "border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700"
                 }`}
               >
-                {option} x {option}
+                {option}x{option}
               </button>
             ))}
           </div>

@@ -28,7 +28,7 @@ export function RoomLayout({ children, chat }: RoomLayoutProps) {
           type="button"
           onClick={() => setIsChatOpen(true)}
           aria-label="채팅 열기"
-          className="fixed right-5 bottom-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500 text-2xl text-white shadow-[0_4px_20px_rgba(16,185,129,0.45)] transition hover:bg-emerald-400 lg:hidden"
+          className="fixed right-5 bottom-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/60 text-2xl text-white shadow-[0_4px_20px_rgba(16,185,129,0.35)] backdrop-blur-sm transition hover:bg-emerald-500/80 lg:hidden"
         >
           💬
         </button>

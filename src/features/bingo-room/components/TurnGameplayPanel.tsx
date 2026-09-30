@@ -50,9 +50,24 @@ export function TurnGameplayPanel({
 
   return (
     <section className="flex w-full max-w-xs flex-col items-center gap-4">
-      <p className="text-center font-medium text-white">
-        {isMyTurn ? "내 차례입니다! 숫자를 눌러 호출하세요" : `${currentTurnNickname}님의 차례`} · {remainingSeconds}초
-      </p>
+      <div className="flex flex-col items-center gap-2">
+        <p className="text-center font-medium text-white">
+          {isMyTurn ? "내 차례입니다! 숫자를 눌러 호출하세요" : `${currentTurnNickname}님의 차례`}
+        </p>
+        {isMyTurn ? (
+          <div
+            className={`flex h-16 w-16 items-center justify-center rounded-full border-4 text-3xl font-bold tabular-nums ${
+              remainingSeconds <= 3
+                ? "animate-pulse border-red-400 text-red-400"
+                : "border-emerald-400 text-emerald-400"
+            }`}
+          >
+            {remainingSeconds}
+          </div>
+        ) : (
+          <p className="text-sm text-slate-400">{remainingSeconds}초 남음</p>
+        )}
+      </div>
       <p className="text-sm text-slate-400">
         승리 조건: {winLineThreshold}줄 완성 (내 진행: {myCompletedLines}/{winLineThreshold}줄)
       </p>
